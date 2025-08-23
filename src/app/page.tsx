@@ -29,7 +29,7 @@ interface PropertyData {
 interface CreativeOfferExtras {
   arvPctUsed: number;
   asIsValue: number;
-  downpayment: number;
+  downPayment: number;
   price: number;
   monthlyPayment: number;
   longLengthInMonths: number;
@@ -132,7 +132,7 @@ export default function Home() {
         arvPctUsed: 110,
         offerType: state.offerType,
         asIsValue,
-        downpayment: Math.round(downpayment),
+        downPayment: Math.round(downpayment),
         price: Math.round(price),
         monthlyPayment: parseFloat(monthlyPayment.toFixed(2)),
         longLengthInMonths,
