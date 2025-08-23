@@ -17,6 +17,26 @@ import { Footer } from '@/components/Footer';
 import { OffersHistory } from '@/components/OffersHistory';
 import { ToastContainer } from '@/components/ToastContainer';
 
+// Shared interface for property input
+interface PropertyData {
+  address: string;
+  arv: number;
+  repairs: number;
+  notes?: string;
+}
+
+// For creative calculation return type
+interface CreativeOfferExtras {
+  arvPctUsed: number;
+  asIsValue: number;
+  downpayment: number;
+  price: number;
+  monthlyPayment: number;
+  longLengthInMonths: number;
+}
+
+type OfferPartial = Omit<Offer, 'id' | 'createdAt' | 'status'> & Partial<CreativeOfferExtras>;
+
 export default function Home() {
   const { state, setIsProcessing, setCurrentOffer } = useAppContext();
 
@@ -47,7 +67,7 @@ export default function Home() {
   }, [state.searchMode, state.selectedProperty]);
 
   // Get property data
-  const getPropertyData = useCallback(() => {
+  const getPropertyData = useCallback((): PropertyData => {
     if (state.searchMode === 'search' && state.selectedProperty) {
       return {
         address: state.selectedProperty.address,
@@ -65,49 +85,61 @@ export default function Home() {
     }
   }, [state.searchMode, state.selectedProperty]);
 
-  // Offer calculation
+  // Cash Offer Calculation
+  const calculateOffer = useCallback(
+    (propertyData: PropertyData): OfferPartial => {
+      const { arv, repairs } = propertyData;
 
-const calculateOffer = useCallback(
-  (
-    propertyData: { address: string; arv: number; repairs: number; notes?: string }
-  ): Omit<Offer, 'id' | 'createdAt' | 'status'> => {
-    const { arv, repairs } = propertyData;
+      let offerAmount = arv * 0.9;
 
-    let offerAmount: number;
-    let arvPctUsed: number;
-    let holdingPctUsed: number;
-    let closingPctUsed: number;
+      if (repairs < 30000) {
+        offerAmount -= (repairs + 30000);
+      } else if (repairs > arv * 0.1) {
+        offerAmount -= ((arv * 0.1) * 2 + (repairs - arv * 0.1) * 1.5);
+      } else {
+        offerAmount -= (repairs * 2);
+      }
 
-    if (state.offerType === 'cash') {
-      arvPctUsed = 0.7;
-      holdingPctUsed = 0.02;
-      closingPctUsed = 0.03;
-    } else {
-      arvPctUsed = 0.8;
-      holdingPctUsed = 0.015;
-      closingPctUsed = 0.025;
-    }
+      offerAmount -= 20000;
 
-    // ✅ use const because these are never reassigned
-    const holdingCostsCalc = arv * holdingPctUsed;
-    const closingCostsCalc = arv * closingPctUsed;
+      // Ensure minimum > 0
+      offerAmount = Math.max(offerAmount, 1000);
 
-    offerAmount = arv * arvPctUsed - repairs - holdingCostsCalc - closingCostsCalc;
-    offerAmount = Math.max(offerAmount, 1000);
+      return {
+        ...propertyData,
+        offerAmount: Math.round(offerAmount),
+        offerType: state.offerType,
+      };
+    },
+    [state.offerType]
+  );
 
-    return {
-      ...propertyData,
-      offerAmount: Math.round(offerAmount),
-      arvPctUsed: Math.round(arvPctUsed * 100),
-      holdingCosts: Math.round(holdingCostsCalc),
-      closingCosts: Math.round(closingCostsCalc),
-      holdingPctUsed: Math.round(holdingPctUsed * 100),
-      closingPctUsed: Math.round(closingPctUsed * 100),
-      offerType: state.offerType,
-    };
-  },
-  [state.offerType]
-);
+  // Creative Offer Calculation
+  const calculateCreativeOffer = useCallback(
+    (propertyData: PropertyData): OfferPartial => {
+      const asIsValue = propertyData.arv ?? 0; 
+      const longLengthInMonths = 360;
+
+      const downpayment = asIsValue * 1.1 * 0.1;
+      const price = asIsValue;
+      const monthlyPayment = ((asIsValue - downpayment) * 1.1) / longLengthInMonths;
+
+      const offerAmount = Math.round(price);
+
+      return {
+        ...propertyData,
+        offerAmount,
+        arvPctUsed: 110,
+        offerType: state.offerType,
+        asIsValue,
+        downpayment: Math.round(downpayment),
+        price: Math.round(price),
+        monthlyPayment: parseFloat(monthlyPayment.toFixed(2)),
+        longLengthInMonths,
+      };
+    },
+    [state.offerType]
+  );
 
   // Generate offer (preview only — do NOT save here)
   const generateOffer = useCallback(async () => {
@@ -124,21 +156,24 @@ const calculateOffer = useCallback(
     offerResultsEl?.classList.add('hidden');
     thinkingAnimationEl?.classList.remove('hidden');
 
-    // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const propertyData = getPropertyData();
-    const partial = calculateOffer(propertyData); // Omit<Offer, 'id' | 'createdAt' | 'status'>
 
-    // Build a non-persisted "preview" Offer just for the UI
+    let partial: OfferPartial;
+    if (state.offerType === 'creative') {
+      partial = calculateCreativeOffer(propertyData);
+    } else {
+      partial = calculateOffer(propertyData);
+    }
+
     const previewOffer: Offer = {
-      id: `preview-${Date.now()}`,       // unique, not stored
+      id: `preview-${Date.now()}`,
       createdAt: new Date().toISOString(),
-      status: 'pending',                 // preview status
+      status: 'pending',
       ...partial,
     };
 
-    // Show preview in UI only
     setCurrentOffer(previewOffer);
 
     thinkingAnimationEl?.classList.add('hidden');
@@ -151,7 +186,9 @@ const calculateOffer = useCallback(
     setIsProcessing,
     getPropertyData,
     calculateOffer,
+    calculateCreativeOffer,
     setCurrentOffer,
+    state.offerType,
   ]);
 
   const isButtonDisabled = !validateInputs() || state.isProcessing;

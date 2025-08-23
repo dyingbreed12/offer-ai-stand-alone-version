@@ -13,6 +13,7 @@ export interface Property {
   status?: string; // Optional, as it's from mockOpportunities
 }
 
+// 🔥 Extended Offer to support both cash + creative
 export interface Offer {
   id: string;
   address: string;
@@ -20,14 +21,16 @@ export interface Offer {
   repairs: number;
   notes?: string;
   offerAmount: number;
-  arvPctUsed: number;
-  holdingCosts: number;
-  closingCosts: number;
-  holdingPctUsed: number;
-  closingPctUsed: number;
   offerType: OfferType;
   createdAt: string;
   status: OfferStatus;
+
+  // Optional fields only used for Creative offers
+  asIsValue?: number;          // Spreadsheet E6
+  downPayment?: number;        // Spreadsheet E10
+  price?: number;              // Spreadsheet E11
+  longLengthInMonths?: number; // Default 360
+  monthlyPayment?: number;     // Spreadsheet E12
 }
 
 export interface AppState {
@@ -69,8 +72,7 @@ export type AppAction =
   | { type: 'DELETE_SAVED_OFFER'; payload: string }
   | { type: 'CLEAR_ALL_OFFERS' };
 
-
-  export interface CustomField {
+export interface CustomField {
   id: string;
   fieldValue?: string;
   fieldValueNumber?: number;

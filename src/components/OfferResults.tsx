@@ -46,22 +46,6 @@ FINANCIAL BREAKDOWN
 ==========================================
 ARV (After Repair Value): $${offerData.arv.toLocaleString()}
 Estimated Repairs: $${offerData.repairs.toLocaleString()}
-ARV Percentage Used: ${offerData.arvPctUsed}%
-
-COST ANALYSIS
-==========================================
-Holding Costs (${offerData.holdingPctUsed}%): $${offerData.holdingCosts.toLocaleString()}
-Closing Costs (${offerData.closingPctUsed}%): $${offerData.closingCosts.toLocaleString()}
-Total Additional Costs: $${(offerData.holdingCosts + offerData.closingCosts).toLocaleString()}
-
-FINAL OFFER CALCULATION
-==========================================
-Base Amount (${offerData.arvPctUsed}% of ARV): $${Math.round(
-      offerData.arv * (offerData.arvPctUsed / 100)
-    ).toLocaleString()}
-Less: Repairs: -$${offerData.repairs.toLocaleString()}
-Less: Holding Costs: -$${offerData.holdingCosts.toLocaleString()}
-Less: Closing Costs: -$${offerData.closingCosts.toLocaleString()}
 
 FINAL OFFER: $${offerData.offerAmount.toLocaleString()}
 
@@ -112,16 +96,16 @@ This offer was generated using professional real estate investment calculations 
     <div className="content-container">
       <div id="offer-results" className="offer-results-section">
         <div className="offer-results-content">
-          {/* Title with target icon */}
+          {/* Title */}
           <h2 className="offer-results-title">
             <span className="target-icon">🎯</span>
             Your Recommended Offer
           </h2>
 
-          {/* Large offer amount */}
+          {/* Big Offer Number */}
           <div className="offer-amount">${offer.offerAmount.toLocaleString()}</div>
 
-          {/* Offer type display */}
+          {/* Offer Type */}
           <div className="offer-type-display">
             <span className="offer-type-icon">
               {offer.offerType === 'cash' ? '💵' : '🎨'}
@@ -129,51 +113,72 @@ This offer was generated using professional real estate investment calculations 
             {offer.offerType === 'cash' ? 'Cash Offer' : 'Creative Offer'}
           </div>
 
-          {/* Breakdown section */}
-          <div className="offer-breakdown">
-            <h3 className="breakdown-title">Detailed Calculation Breakdown</h3>
-
-            <div className="breakdown-row">
-              <div className="breakdown-item">
-                <span className="breakdown-label">Property ARV:</span>
-                <span className="breakdown-value">${offer.arv.toLocaleString()}</span>
+          {/* Breakdown */}
+          {offer.offerType === 'cash' && (
+            <div className="offer-breakdown">
+              <h3 className="breakdown-title">Detailed Calculation Breakdown</h3>
+              <div className="breakdown-row">
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Property ARV:</span>
+                  <span className="breakdown-value">${offer.arv.toLocaleString()}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Repairs:</span>
+                  <span className="breakdown-value">${offer.repairs.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="breakdown-item">
-                <span className="breakdown-label">Holding Costs:</span>
-                <span className="breakdown-value">${offer.holdingCosts.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div className="breakdown-row">
-              <div className="breakdown-item">
-                <span className="breakdown-label">Repair Costs:</span>
-                <span className="breakdown-value">${offer.repairs.toLocaleString()}</span>
-              </div>
-              <div className="breakdown-item">
-                <span className="breakdown-label">Closing Costs:</span>
-                <span className="breakdown-value">${offer.closingCosts.toLocaleString()}</span>
+              <div className="final-offer-section">
+                <div className="final-offer-item">
+                  <span className="final-offer-label">Final Offer:</span>
+                  <span className="final-offer-value">
+                    ${offer.offerAmount.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="breakdown-row">
-              <div className="breakdown-item">
-                <span className="breakdown-label">ARV Percentage:</span>
-                <span className="breakdown-value">{offer.arvPctUsed}%</span>
+          {offer.offerType === 'creative' && (
+            <div className="offer-breakdown">
+              <h3 className="breakdown-title">Creative Offer Breakdown</h3>
+              <div className="breakdown-row">
+                <div className="breakdown-item">
+                  <span className="breakdown-label">As-Is Value:</span>
+                  <span className="breakdown-value">${offer.asIsValue?.toLocaleString()}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Downpayment:</span>
+                  <span className="breakdown-value">${offer.downPayment?.toLocaleString()}</span>
+                </div>
               </div>
-              <div></div>
-            </div>
-
-            <div className="final-offer-section">
-              <div className="final-offer-item">
-                <span className="final-offer-label">Final Offer:</span>
-                <span className="final-offer-value">
-                  ${offer.offerAmount.toLocaleString()}
-                </span>
+              <div className="breakdown-row">
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Price:</span>
+                  <span className="breakdown-value">${offer.price?.toLocaleString()}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Monthly Payment:</span>
+                  <span className="breakdown-value">${offer.monthlyPayment?.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="breakdown-row">
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Term Length:</span>
+                  <span className="breakdown-value">{offer.longLengthInMonths} months</span>
+                </div>
+              </div>
+              <div className="final-offer-section">
+                <div className="final-offer-item">
+                  <span className="final-offer-label">Final Offer (Price):</span>
+                  <span className="final-offer-value">
+                    ${offer.offerAmount.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Action buttons */}
+          {/* Actions */}
           <div className="offer-actions">
             <button className="action-btn save" onClick={handleSaveOffer} type="button">
               <span className="btn-icon">💾</span>
@@ -189,7 +194,7 @@ This offer was generated using professional real estate investment calculations 
               type="button"
             >
               <span className="btn-icon">📥</span>
-              Download PDF
+              Download TXT
             </button>
             <button
               className="action-btn share hidden"
