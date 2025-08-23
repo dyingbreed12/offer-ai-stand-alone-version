@@ -1,20 +1,57 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import { useState, useEffect } from 'react';
 
 export const PropertyInformation = () => {
   const { state, setSearchMode, setSelectedProperty } = useAppContext();
 
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const handleSearchModeClick = (mode: 'search' | 'manual') => {
-    console.log('Search mode clicked:', mode); // Debug log
     setSearchMode(mode);
   };
 
   const clearSelection = () => {
-    console.log('Clear selection clicked'); // Debug log
     setSelectedProperty(null);
-    const addressInput = document.getElementById('address-search') as HTMLInputElement;
-    if (addressInput) addressInput.value = '';
+    setQuery('');
+    setResults([]);
+  };
+
+  // Fetch from API when query changes
+  useEffect(() => {
+    if (query.length < 3) return; // wait until at least 3 chars
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/opportunities?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        setResults(data.opportunities || []);
+      } catch (err) {
+        console.error('Search error:', err);
+      }
+      setLoading(false);
+    };
+    const delay = setTimeout(fetchData, 400); // debounce
+    return () => clearTimeout(delay);
+  }, [query]);
+
+  const handleSelect = (opportunity: any) => {
+    // Map GHL opportunity into our context property format
+    const arvField = opportunity.customFields.find((f: any) => f.id === 'wuSG63CwYz9EksTUtgH1');
+    const repairsField = opportunity.customFields.find((f: any) => f.id === 'had1BxDw5o9zd9i63jrq');
+
+  setSelectedProperty({
+    id: opportunity.id,
+    name: opportunity.name, // ✅ Add this
+    address: opportunity.name, // or use another field if you have a dedicated address field
+    arv: arvField?.fieldValueNumber || 0,
+    repairs: repairsField?.fieldValueNumber || 0,
+  });
+    setResults([]);
+    setQuery(opportunity.name);
   };
 
   return (
@@ -56,13 +93,31 @@ export const PropertyInformation = () => {
               <input
                 type="text"
                 id="address-search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Start typing an address or property name..."
                 className="search-input"
               />
             </div>
 
+            {loading && <div className="text-sm mt-2">Searching...</div>}
+
+            {results.length > 0 && (
+              <ul className="border mt-2 rounded-lg bg-white shadow">
+                {results.map((op) => (
+                  <li
+                    key={op.id}
+                    onClick={() => handleSelect(op)}
+                    className="p-2 cursor-pointer hover:bg-gray-100"
+                  >
+                    {op.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+
             {state.selectedProperty && (
-              <div className="selected-property">
+              <div className="selected-property mt-3">
                 <div className="property-info">
                   <div className="property-icon">🏠</div>
                   <div className="property-details">
@@ -81,7 +136,7 @@ export const PropertyInformation = () => {
           </div>
         )}
 
-        {/* Manual Mode Content */}
+        {/* Manual Mode Content (unchanged) */}
         {state.searchMode === 'manual' && (
           <div className="manual-content">
             <div className="manual-form-grid">
