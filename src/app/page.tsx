@@ -23,7 +23,7 @@ interface PropertyData {
   arv: number;
   repairs: number;
   notes?: string;
-  manualDownPayment?: number; // ✅ capture manual down payment if provided
+  manualDownPayment?: number;
 }
 
 // For creative calculation return type
@@ -54,7 +54,7 @@ export default function Home() {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  // Validation function
+  // ✅ Validation function (real-time, works for search & manual)
   const validateInputs = useCallback(() => {
     if (state.searchMode === 'search') {
       return state.selectedProperty !== null;
@@ -63,11 +63,16 @@ export default function Home() {
       const arv = parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value);
       const repairs = parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value);
 
-      return address && !isNaN(arv) && arv > 0 && !isNaN(repairs) && repairs >= 0;
+      if (!address || isNaN(arv) || arv <= 0 || isNaN(repairs) || repairs < 0) {
+        return false;
+      }
+
+      // ⛔ Removed manual-downpayment requirement for creative
+      return true;
     }
   }, [state.searchMode, state.selectedProperty]);
 
-  // Get property data (✅ grab manual down payment if provided)
+  // Get property data
   const getPropertyData = useCallback((): PropertyData => {
     if (state.searchMode === 'search' && state.selectedProperty) {
       return {
@@ -77,16 +82,16 @@ export default function Home() {
         notes: state.selectedProperty.name || '',
       };
     } else {
-      const manualDownPayment = parseFloat(
-        (document.getElementById('manual-downpayment') as HTMLInputElement)?.value
-      );
+      // only used for Cash if you ever want manual downpayment
+      const manualDownPaymentEl = document.getElementById('manual-downpayment') as HTMLInputElement | null;
+      const manualDownPayment = manualDownPaymentEl ? parseFloat(manualDownPaymentEl.value) : undefined;
 
       return {
         address: (document.getElementById('manual-address') as HTMLInputElement)?.value.trim() || '',
         arv: parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value) || 0,
         repairs: parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value) || 0,
         notes: (document.getElementById('manual-notes') as HTMLInputElement)?.value.trim() || '',
-        manualDownPayment: !isNaN(manualDownPayment) ? manualDownPayment : undefined,
+        manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
       };
     }
   }, [state.searchMode, state.selectedProperty]);
@@ -115,7 +120,6 @@ export default function Home() {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
         offerType: state.offerType,
-        // ✅ use manual down payment if available
         downPayment: manualDownPayment ?? Math.round(offerAmount * 0.1),
       };
     },
@@ -125,16 +129,16 @@ export default function Home() {
   // Creative Offer Calculation
   const calculateCreativeOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
-      const { arv, manualDownPayment } = propertyData;
+      const { arv } = propertyData;
       const asIsValue = arv ?? 0;
       const longLengthInMonths = 360;
 
-      // ✅ use manual down payment if provided
-      const downPayment = manualDownPayment ?? asIsValue * 1.1 * 0.1;
+      // ⛔ No manual downpayment required for creative
+      const downPayment = asIsValue * 1.1 * 0.1;
       const price = asIsValue;
       const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
 
-      const offerAmount = Math.round(price);
+      const offerAmount = Math.round(monthlyPayment); // ✅ Final offer = monthly payment
 
       return {
         ...propertyData,
@@ -151,7 +155,7 @@ export default function Home() {
     [state.offerType]
   );
 
-  // Generate offer (preview only — do NOT save here)
+  // Generate offer
   const generateOffer = useCallback(async () => {
     if (!validateInputs() || state.isProcessing) {
       console.log('Validation failed or already processing');

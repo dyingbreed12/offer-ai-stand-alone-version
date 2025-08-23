@@ -11,8 +11,18 @@ export const PropertyInformation = () => {
   const [results, setResults] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [manualAddress, setManualAddress] = useState('');
+  const [manualArv, setManualArv] = useState<number | ''>('');
+  const [manualRepairs, setManualRepairs] = useState<number | ''>('');
+  const [manualNotes, setManualNotes] = useState('');
+
   const handleSearchModeClick = (mode: 'search' | 'manual') => {
     setSearchMode(mode);
+
+    if (mode === 'manual') {
+      // Reset when switching to manual
+      setSelectedProperty(null);
+    }
   };
 
   const clearSelection = () => {
@@ -20,6 +30,24 @@ export const PropertyInformation = () => {
     setQuery('');
     setResults([]);
   };
+
+  // ✅ Keep context in sync when user types manual entry
+  useEffect(() => {
+    if (state.searchMode === 'manual') {
+      if (manualAddress && manualArv !== '' && manualRepairs !== '') {
+        const property: Property = {
+          id: 'manual-entry',
+          name: manualAddress,
+          address: manualAddress,
+          arv: Number(manualArv),
+          repairs: Number(manualRepairs),
+        };
+        setSelectedProperty(property);
+      } else {
+        setSelectedProperty(null);
+      }
+    }
+  }, [manualAddress, manualArv, manualRepairs, manualNotes, state.searchMode, setSelectedProperty]);
 
   // Fetch from API when query changes
   useEffect(() => {
@@ -40,7 +68,6 @@ export const PropertyInformation = () => {
   }, [query]);
 
   const handleSelect = (opportunity: Opportunity) => {
-    // Map GHL opportunity into our context property format
     const arvField: CustomField | undefined = opportunity.customFields.find(
       (f) => f.id === 'wuSG63CwYz9EksTUtgH1'
     );
@@ -51,7 +78,7 @@ export const PropertyInformation = () => {
     const property: Property = {
       id: opportunity.id,
       name: opportunity.name,
-      address: opportunity.name, // or map from a different custom field if available
+      address: opportunity.name,
       arv: arvField?.fieldValueNumber ?? 0,
       repairs: repairsField?.fieldValueNumber ?? 0,
     };
@@ -143,48 +170,64 @@ export const PropertyInformation = () => {
           </div>
         )}
 
-        {/* Manual Mode Content (unchanged) */}
+        {/* ✅ Manual Mode Content (with state updates) */}
         {state.searchMode === 'manual' && (
           <div className="manual-content">
             <div className="manual-form-grid">
               <div className="form-field">
-                <label htmlFor="manual-address" className="field-label">Property Address</label>
+                <label htmlFor="manual-address" className="field-label">
+                  Property Address
+                </label>
                 <input
                   type="text"
                   id="manual-address"
+                  value={manualAddress}
+                  onChange={(e) => setManualAddress(e.target.value)}
                   placeholder="123 Main St, City, State 12345"
                   className="field-input"
                 />
               </div>
               <div className="form-field">
-                <label htmlFor="manual-arv" className="field-label">ARV (After Repair Value)</label>
+                <label htmlFor="manual-arv" className="field-label">
+                  ARV (After Repair Value)
+                </label>
                 <div className="input-with-prefix">
                   <span className="input-prefix">$</span>
                   <input
                     type="number"
                     id="manual-arv"
+                    value={manualArv}
+                    onChange={(e) => setManualArv(e.target.value ? Number(e.target.value) : '')}
                     placeholder="250,000"
                     className="field-input with-prefix"
                   />
                 </div>
               </div>
               <div className="form-field">
-                <label htmlFor="manual-repairs" className="field-label">Estimated Repair Costs</label>
+                <label htmlFor="manual-repairs" className="field-label">
+                  Estimated Repair Costs
+                </label>
                 <div className="input-with-prefix">
                   <span className="input-prefix">$</span>
                   <input
                     type="number"
                     id="manual-repairs"
+                    value={manualRepairs}
+                    onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
                     placeholder="25,000"
                     className="field-input with-prefix"
                   />
                 </div>
               </div>
               <div className="form-field">
-                <label htmlFor="manual-notes" className="field-label">Additional Notes (Optional)</label>
+                <label htmlFor="manual-notes" className="field-label">
+                  Additional Notes (Optional)
+                </label>
                 <input
                   type="text"
                   id="manual-notes"
+                  value={manualNotes}
+                  onChange={(e) => setManualNotes(e.target.value)}
                   placeholder="Property condition, special considerations..."
                   className="field-input"
                 />
