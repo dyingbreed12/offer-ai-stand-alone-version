@@ -68,3 +68,16 @@ export type AppAction =
   | { type: 'SET_SAVED_OFFERS'; payload: Offer[] }
   | { type: 'DELETE_SAVED_OFFER'; payload: string }
   | { type: 'CLEAR_ALL_OFFERS' };
+
+
+  export interface CustomField {
+  id: string;
+  fieldValue?: string;
+  fieldValueNumber?: number;
+}
+
+export interface Opportunity {
+  id: string;
+  name: string;
+  customFields: CustomField[];
+}

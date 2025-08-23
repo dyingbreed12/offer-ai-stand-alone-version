@@ -2,12 +2,13 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { useState, useEffect } from 'react';
+import { Opportunity, Property, CustomField } from '@/lib/types';
 
 export const PropertyInformation = () => {
   const { state, setSearchMode, setSelectedProperty } = useAppContext();
 
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearchModeClick = (mode: 'search' | 'manual') => {
@@ -38,18 +39,24 @@ export const PropertyInformation = () => {
     return () => clearTimeout(delay);
   }, [query]);
 
-  const handleSelect = (opportunity: any) => {
+  const handleSelect = (opportunity: Opportunity) => {
     // Map GHL opportunity into our context property format
-    const arvField = opportunity.customFields.find((f: any) => f.id === 'wuSG63CwYz9EksTUtgH1');
-    const repairsField = opportunity.customFields.find((f: any) => f.id === 'had1BxDw5o9zd9i63jrq');
+    const arvField: CustomField | undefined = opportunity.customFields.find(
+      (f) => f.id === 'wuSG63CwYz9EksTUtgH1'
+    );
+    const repairsField: CustomField | undefined = opportunity.customFields.find(
+      (f) => f.id === 'had1BxDw5o9zd9i63jrq'
+    );
 
-  setSelectedProperty({
-    id: opportunity.id,
-    name: opportunity.name, // ✅ Add this
-    address: opportunity.name, // or use another field if you have a dedicated address field
-    arv: arvField?.fieldValueNumber || 0,
-    repairs: repairsField?.fieldValueNumber || 0,
-  });
+    const property: Property = {
+      id: opportunity.id,
+      name: opportunity.name,
+      address: opportunity.name, // or map from a different custom field if available
+      arv: arvField?.fieldValueNumber ?? 0,
+      repairs: repairsField?.fieldValueNumber ?? 0,
+    };
+
+    setSelectedProperty(property);
     setResults([]);
     setQuery(opportunity.name);
   };
