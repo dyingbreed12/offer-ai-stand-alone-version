@@ -219,7 +219,7 @@ export const PropertyInformation = () => {
                   />
                 </div>
               </div>
-              <div className="form-field">
+              {/* <div className="form-field">
                 <label htmlFor="manual-notes" className="field-label">
                   Additional Notes (Optional)
                 </label>
@@ -231,7 +231,7 @@ export const PropertyInformation = () => {
                   placeholder="Property condition, special considerations..."
                   className="field-input"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         )}
