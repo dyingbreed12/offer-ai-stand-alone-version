@@ -23,6 +23,44 @@ body {
     color: white;
 }
 
+/* --- Native <select> and <option> styling fix --- */
+select {
+  background-color: #ffffff !important;
+  color: #111827 !important; /* gray-900 */
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  appearance: none; /* hide system arrow in most browsers */
+  color-scheme: light;
+}
+
+select:focus {
+  outline: none;
+  border-color: #6366f1; /* indigo-500 */
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+/* Force option styling (when dropdown is open) */
+select option {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  select {
+    background-color: #111827 !important; /* gray-900 */
+    color: #e5e7eb !important; /* gray-200 */
+    border-color: #374151; /* gray-700 */
+    color-scheme: dark;
+  }
+  select option {
+    background-color: #111827 !important;
+    color: #e5e7eb !important;
+  }
+}
+
 /* App Container */
 .app-container {
     min-height: 100vh;
