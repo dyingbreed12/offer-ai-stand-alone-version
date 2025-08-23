@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,53 +19,63 @@ export const ConfirmationModal = ({
   confirmText = 'Delete All',
   cancelText = 'Cancel',
 }: ConfirmationModalProps) => {
-  // 🔹 Close on ESC key
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleEsc);
-    }
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay fade-in" onClick={onClose}>
+    <div
+      className={`modal-overlay ${isOpen ? 'visible' : 'hidden'}`}
+      onClick={onClose}
+    >
       <div
-        className="modal-content slide-up"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-        aria-describedby="modal-message"
+        className={`modal-content ${isOpen ? 'open' : 'close'}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-icon">🗑️</div>
-        <h3 id="modal-title" className="modal-title">
-          {title}
-        </h3>
-        <p id="modal-message" className="modal-message">
-          {message}
-        </p>
+        <h3 className="modal-title">{title}</h3>
+        <p className="modal-message">{message}</p>
         <div className="modal-actions">
           <button className="modal-btn secondary" onClick={onClose}>
             {cancelText}
           </button>
-          <button
-            className="modal-btn primary"
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
-          >
+          <button className="modal-btn primary" onClick={onConfirm}>
             {confirmText}
           </button>
         </div>
       </div>
+
+      <style jsx>{`
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.5);
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .modal-overlay.visible {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .modal-content {
+          background: #fff;
+          padding: 1.5rem;
+          border-radius: 10px;
+          max-width: 400px;
+          width: 90%;
+          transform: translateY(-20px);
+          transition: transform 0.2s ease;
+        }
+        .modal-content.open {
+          transform: translateY(0);
+        }
+        .modal-content.close {
+          transform: translateY(-20px);
+        }
+      `}</style>
     </div>
   );
 };

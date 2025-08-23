@@ -5,8 +5,9 @@
 import React, { createContext, useReducer, useContext, useEffect, useState, useCallback } from 'react';
 import { AppState, AppAction, AppContextType, Offer, OfferType } from '@/lib/types';
 import { STORAGE_KEYS } from '@/lib/constants';
+import { v4 as uuidv4 } from 'uuid'; // ✅ for guaranteed unique IDs
 
-// Initial state for the application
+// Initial state
 const initialState: AppState = {
   offerType: 'cash',
   searchMode: 'search',
@@ -14,10 +15,10 @@ const initialState: AppState = {
   isProcessing: false,
   currentTab: 'generator',
   currentOffer: null,
-  savedOffers: [], // This will be loaded from localStorage
+  savedOffers: [],
 };
 
-// Reducer function to manage state transitions
+// Reducer function
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_OFFER_TYPE':
@@ -31,18 +32,20 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_CURRENT_TAB':
       return { ...state, currentTab: action.payload };
     case 'SET_CURRENT_OFFER':
+      // ❌ Do not persist here
       return { ...state, currentOffer: action.payload };
-    case 'ADD_SAVED_OFFER':
-      // Add new offer to the beginning of the array
+    case 'ADD_SAVED_OFFER': {
       const newOffers = [action.payload, ...state.savedOffers];
       localStorage.setItem(STORAGE_KEYS.OFFERS, JSON.stringify(newOffers));
       return { ...state, savedOffers: newOffers };
+    }
     case 'SET_SAVED_OFFERS':
       return { ...state, savedOffers: action.payload };
-    case 'DELETE_SAVED_OFFER':
-      const filteredOffers = state.savedOffers.filter(offer => offer.id !== action.payload);
+    case 'DELETE_SAVED_OFFER': {
+      const filteredOffers = state.savedOffers.filter(o => o.id !== action.payload);
       localStorage.setItem(STORAGE_KEYS.OFFERS, JSON.stringify(filteredOffers));
       return { ...state, savedOffers: filteredOffers };
+    }
     case 'CLEAR_ALL_OFFERS':
       localStorage.removeItem(STORAGE_KEYS.OFFERS);
       return { ...state, savedOffers: [] };
@@ -51,15 +54,14 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   }
 };
 
-// Create the context
+// Context
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Create the provider component
+// Provider
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [isClient, setIsClient] = useState(false); // To handle localStorage on client-side only
+  const [isClient, setIsClient] = useState(false);
 
-  // Load saved offers from localStorage on initial client-side render
   useEffect(() => {
     setIsClient(true);
     try {
@@ -69,12 +71,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     } catch (error) {
       console.error("Failed to load offers from localStorage:", error);
-      // Fallback to empty array if parsing fails
       dispatch({ type: 'SET_SAVED_OFFERS', payload: [] });
     }
   }, []);
 
-  // Action dispatchers
+  // Actions
   const switchTab = useCallback((tabName: 'generator' | 'history') => {
     dispatch({ type: 'SET_CURRENT_TAB', payload: tabName });
   }, []);
@@ -99,9 +100,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dispatch({ type: 'SET_CURRENT_OFFER', payload: offer });
   }, []);
 
+  // ✅ Always return an Offer (never null)
   const saveOffer = useCallback((offerData: Omit<Offer, 'id' | 'createdAt' | 'status'>): Offer => {
     const newOffer: Offer = {
-      id: Date.now().toString(),
+      id: uuidv4(), // unique ID instead of Date.now()
       ...offerData,
       createdAt: new Date().toISOString(),
       status: 'active',
@@ -111,8 +113,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const getSavedOffers = useCallback((): Offer[] => {
-    // This function is primarily for components to read the current state.
-    // The actual loading from localStorage is handled by the useEffect above.
     return state.savedOffers;
   }, [state.savedOffers]);
 
@@ -125,12 +125,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const updateOfferCount = useCallback(() => {
-    // This function is now implicitly handled by `state.savedOffers.length`
-    // in components that need the count. No direct dispatch needed here.
+    // Count is derived from state.savedOffers.length
   }, []);
 
-
-  const contextValue = {
+  const contextValue: AppContextType = {
     state,
     dispatch,
     switchTab,
@@ -143,18 +141,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     getSavedOffers,
     deleteOffer,
     clearAllOffers,
-    updateOfferCount, // Kept for compatibility, but its logic is now implicit
+    updateOfferCount,
   };
 
-  // Only render children if on client-side to avoid localStorage issues during SSR
-  if (!isClient) {
-    return null;
-  }
+  if (!isClient) return null;
 
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
-// Custom hook to use the AppContext
+// Hook
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (context === undefined) {

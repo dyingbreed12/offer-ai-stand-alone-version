@@ -2,7 +2,7 @@
 
 export type OfferType = 'cash' | 'creative';
 export type SearchMode = 'search' | 'manual';
-export type OfferStatus = 'active' | 'pending' | 'archived';
+export type OfferStatus = 'active' | 'pending' | 'archived' | 'new';
 
 export interface Property {
   id: string;

@@ -166,8 +166,7 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
             />
             <h3 className="empty-title">No Offers Saved Yet</h3>
             <p className="empty-description">
-              You haven't generated any offers yet. Create your first professional offer to
-              get started!
+                You haven&apos;t generated any offers yet. Create your first professional offer to get started!
             </p>
             <button
               className="empty-action-btn"
