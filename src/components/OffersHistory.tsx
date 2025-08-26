@@ -142,11 +142,17 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
 
               <div className="offer-card-body">
                 <div className="offer-amount-display">
-                  ${offer.offerAmount.toLocaleString()}
+                  {offer.offerType === 'creative' ? `$${(offer.monthlyPayment ?? 0).toFixed(2)}` : `$${offer.offerAmount.toLocaleString()}`}
                 </div>
                 <div className="offer-meta">
-                  ARV: ${offer.arv.toLocaleString()} | Repairs: $
-                  {offer.repairs.toLocaleString()}
+                  {offer.offerType === 'creative' ? (
+                    `As Is Value: $${offer.arv.toLocaleString()}`
+                  ) : (
+                    <>
+                      ARV: ${offer.arv.toLocaleString()} | Repairs: $
+                      {offer.repairs.toLocaleString()}
+                    </>
+                  )}
                 </div>
                 <div className="offer-date">
                   Generated on {new Date(offer.createdAt).toLocaleDateString()}
@@ -182,14 +188,14 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
       {/* Confirmation modal */}
       {isConfirmOpen && (
         <ConfirmationModal
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
-            onConfirm={confirmClearAll}
-            title="Confirm Clear All"
-            message="Are you sure you want to delete all saved offers? This action cannot be undone."
-            confirmText="Delete All"
-            cancelText="Cancel"
-            />
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={confirmClearAll}
+          title="Confirm Clear All"
+          message="Are you sure you want to delete all saved offers? This action cannot be undone."
+          confirmText="Delete All"
+          cancelText="Cancel"
+        />
       )}
     </div>
   );

@@ -31,27 +31,42 @@ export const PropertyInformation = () => {
     setResults([]);
   };
 
-  // ✅ Keep context in sync when user types manual entry
   useEffect(() => {
     if (state.searchMode === 'manual') {
-      if (manualAddress && manualArv !== '' && manualRepairs !== '') {
-        const property: Property = {
-          id: 'manual-entry',
-          name: manualAddress,
-          address: manualAddress,
-          arv: Number(manualArv),
-          repairs: Number(manualRepairs),
-        };
-        setSelectedProperty(property);
+      const isCreativeAndManual = state.searchMode === 'manual' && state.offerType === 'creative';
+      
+      if (isCreativeAndManual) {
+        if (manualArv !== '') {
+          const property: Property = {
+            id: 'manual-entry',
+            name: manualAddress,
+            address: manualAddress,
+            arv: Number(manualArv),
+            repairs: Number(manualRepairs),
+          };
+          setSelectedProperty(property);
+        } else {
+          setSelectedProperty(null);
+        }
       } else {
-        setSelectedProperty(null);
+        if (manualAddress && manualArv !== '' && manualRepairs !== '') {
+          const property: Property = {
+            id: 'manual-entry',
+            name: manualAddress,
+            address: manualAddress,
+            arv: Number(manualArv),
+            repairs: Number(manualRepairs),
+          };
+          setSelectedProperty(property);
+        } else {
+          setSelectedProperty(null);
+        }
       }
     }
-  }, [manualAddress, manualArv, manualRepairs, manualNotes, state.searchMode, setSelectedProperty]);
+  }, [manualAddress, manualArv, manualRepairs, manualNotes, state.searchMode, state.offerType, setSelectedProperty]);
 
-  // Fetch from API when query changes
   useEffect(() => {
-    if (query.length < 3) return; // wait until at least 3 chars
+    if (query.length < 3) return;
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -63,7 +78,7 @@ export const PropertyInformation = () => {
       }
       setLoading(false);
     };
-    const delay = setTimeout(fetchData, 400); // debounce
+    const delay = setTimeout(fetchData, 400);
     return () => clearTimeout(delay);
   }, [query]);
 
@@ -87,6 +102,8 @@ export const PropertyInformation = () => {
     setResults([]);
     setQuery(opportunity.name);
   };
+
+  const hideForCreative = state.searchMode === 'manual' && state.offerType === 'creative';
 
   return (
     <div className="content-container">
@@ -170,26 +187,13 @@ export const PropertyInformation = () => {
           </div>
         )}
 
-        {/* ✅ Manual Mode Content (with state updates) */}
+        {/* Manual Mode Content */}
         {state.searchMode === 'manual' && (
           <div className="manual-content">
             <div className="manual-form-grid">
               <div className="form-field">
-                <label htmlFor="manual-address" className="field-label">
-                  Property Address
-                </label>
-                <input
-                  type="text"
-                  id="manual-address"
-                  value={manualAddress}
-                  onChange={(e) => setManualAddress(e.target.value)}
-                  placeholder="123 Main St, City, State 12345"
-                  className="field-input"
-                />
-              </div>
-              <div className="form-field">
                 <label htmlFor="manual-arv" className="field-label">
-                  ARV (After Repair Value)
+                  {hideForCreative ? 'As Is Value' : 'ARV (After Repair Value)'}
                 </label>
                 <div className="input-with-prefix">
                   <span className="input-prefix">$</span>
@@ -203,35 +207,24 @@ export const PropertyInformation = () => {
                   />
                 </div>
               </div>
-              <div className="form-field">
-                <label htmlFor="manual-repairs" className="field-label">
-                  Estimated Repair Costs
-                </label>
-                <div className="input-with-prefix">
-                  <span className="input-prefix">$</span>
-                  <input
-                    type="number"
-                    id="manual-repairs"
-                    value={manualRepairs}
-                    onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
-                    placeholder="25,000"
-                    className="field-input with-prefix"
-                  />
+              {!hideForCreative && (
+                <div className="form-field">
+                  <label htmlFor="manual-repairs" className="field-label">
+                    Estimated Repair Costs
+                  </label>
+                  <div className="input-with-prefix">
+                    <span className="input-prefix">$</span>
+                    <input
+                      type="number"
+                      id="manual-repairs"
+                      value={manualRepairs}
+                      onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
+                      placeholder="25,000"
+                      className="field-input with-prefix"
+                    />
+                  </div>
                 </div>
-              </div>
-              {/* <div className="form-field">
-                <label htmlFor="manual-notes" className="field-label">
-                  Additional Notes (Optional)
-                </label>
-                <input
-                  type="text"
-                  id="manual-notes"
-                  value={manualNotes}
-                  onChange={(e) => setManualNotes(e.target.value)}
-                  placeholder="Property condition, special considerations..."
-                  className="field-input"
-                />
-              </div> */}
+              )}
             </div>
           </div>
         )}

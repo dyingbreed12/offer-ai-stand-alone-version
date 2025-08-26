@@ -54,23 +54,24 @@ export default function Home() {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  // ✅ Validation function (real-time, works for search & manual)
+  // ✅ Updated Validation function
   const validateInputs = useCallback(() => {
     if (state.searchMode === 'search') {
       return state.selectedProperty !== null;
-    } else {
-      const address = (document.getElementById('manual-address') as HTMLInputElement)?.value.trim();
+    } else { // Manual mode
       const arv = parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value);
-      const repairs = parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value);
-
-      if (!address || isNaN(arv) || arv <= 0 || isNaN(repairs) || repairs < 0) {
-        return false;
+      
+      // Validation for Creative Offer (only ARV required)
+      if (state.offerType === 'creative') {
+        return !isNaN(arv) && arv > 0;
       }
-
-      // ⛔ Removed manual-downpayment requirement for creative
-      return true;
+      
+      // Validation for Cash Offer (ARV and Repairs required)
+      const repairs = parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value);
+      
+      return !isNaN(arv) && arv > 0 && !isNaN(repairs) && repairs >= 0;
     }
-  }, [state.searchMode, state.selectedProperty]);
+  }, [state.searchMode, state.selectedProperty, state.offerType]);
 
   // Get property data
   const getPropertyData = useCallback((): PropertyData => {
@@ -82,19 +83,21 @@ export default function Home() {
         notes: state.selectedProperty.name || '',
       };
     } else {
-      // only used for Cash if you ever want manual downpayment
       const manualDownPaymentEl = document.getElementById('manual-downpayment') as HTMLInputElement | null;
       const manualDownPayment = manualDownPaymentEl ? parseFloat(manualDownPaymentEl.value) : undefined;
+      
+      const repairsValue = state.offerType === 'creative' ? 0 : parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value) || 0;
+      const addressValue = (document.getElementById('manual-address') as HTMLInputElement)?.value.trim() || '';
 
       return {
-        address: (document.getElementById('manual-address') as HTMLInputElement)?.value.trim() || '',
+        address: addressValue,
         arv: parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value) || 0,
-        repairs: parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value) || 0,
+        repairs: repairsValue,
         notes: (document.getElementById('manual-notes') as HTMLInputElement)?.value.trim() || '',
         manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
       };
     }
-  }, [state.searchMode, state.selectedProperty]);
+  }, [state.searchMode, state.selectedProperty, state.offerType]);
 
   // Cash Offer Calculation
   const calculateOffer = useCallback(
@@ -133,12 +136,11 @@ export default function Home() {
       const asIsValue = arv ?? 0;
       const longLengthInMonths = 360;
 
-      // ⛔ No manual downpayment required for creative
       const downPayment = asIsValue * 1.1 * 0.1;
-      const price = asIsValue;
+      const price = asIsValue * 1.1;
       const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
 
-      const offerAmount = Math.round(monthlyPayment); // ✅ Final offer = monthly payment
+      const offerAmount = Math.round(monthlyPayment); // Final offer = monthly payment
 
       return {
         ...propertyData,
@@ -175,6 +177,8 @@ export default function Home() {
     const propertyData = getPropertyData();
 
     let partial: OfferPartial;
+
+    console.log('state.offerType:', state.offerType);
     if (state.offerType === 'creative') {
       partial = calculateCreativeOffer(propertyData);
     } else {
