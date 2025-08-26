@@ -108,7 +108,7 @@ export const PropertyInformation = () => {
   return (
     <div className="content-container">
       <div className="property-info-section">
-        <div className="section-header-left">
+        <div className="section-header-centered">
           <h2 className="section-title">Property Information</h2>
           <p className="section-description">
             Search your HighLevel CRM opportunities or enter property details manually for
