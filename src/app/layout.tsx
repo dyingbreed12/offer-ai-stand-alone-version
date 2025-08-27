@@ -8,7 +8,7 @@ import { AppProvider } from '@/context/AppContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Offer AI Bot - Real Estate Deal Calculator',
+  title: 'Low Ball AI Bot - Real Estate Deal Calculator',
   description: 'Generate compelling Cash or Creative offers with our AI-powered calculator.',
 };
 
