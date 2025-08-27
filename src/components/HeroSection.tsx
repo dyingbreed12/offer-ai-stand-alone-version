@@ -15,7 +15,7 @@ export const HeroSection = () => (
             height={40}
           />
         </div>
-        <h1 className="hero-title">Offer AI Bot</h1>
+        <h1 className="hero-title">Low Ball AI</h1>
       </div>
       
       {/* Description */}
