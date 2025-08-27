@@ -4,7 +4,7 @@ export const Footer = () => (
   <div className="content-container">
     <div className="footer-section">
       <div className="footer-content">
-        <h4 className="footer-title">Low Ball AI Bot v1.0</h4>
+        <h4 className="footer-title">Lowball AI Bot v1.0</h4>
         <div className="footer-description">
           <p>Embeddable in HighLevel CRM | Production-ready | Future-proof architecture</p>
           <p>Built with Next.js, Tailwind CSS v3, and HighLevel API v2</p>
