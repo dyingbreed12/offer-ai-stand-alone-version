@@ -29,7 +29,7 @@ export const OfferTypeSelection = () => {
             >
               <div className="offer-type-icon">💵</div>
               <div className="offer-type-content">
-                <div className="offer-type-title">Cash Offer</div>
+                <div className="offer-type-title">Cash Fix and Flip</div>
                 <div className="offer-type-subtitle">Quick close, lower price</div>
               </div>
             </button>

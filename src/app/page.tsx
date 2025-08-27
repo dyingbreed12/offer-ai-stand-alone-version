@@ -130,32 +130,33 @@ export default function Home() {
   );
 
   // Creative Offer Calculation
-  const calculateCreativeOffer = useCallback(
-    (propertyData: PropertyData): OfferPartial => {
-      const { arv } = propertyData;
-      const asIsValue = arv ?? 0;
-      const longLengthInMonths = 360;
+  const calculateCreativeOffer = useCallback(
+    (propertyData: PropertyData): OfferPartial => {
+      const { arv } = propertyData;
+      const asIsValue = arv ?? 0;
+      const longLengthInMonths = 360;
 
-      const downPayment = asIsValue * 1.1 * 0.1;
-      const price = asIsValue * 1.1;
-      const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
+      // ✅ UPDATED: Calculation for downPayment based on the new formula
+      const downPayment = asIsValue * 1.1 * 0.05;
+      const price = asIsValue * 1.1;
+      const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
 
-      const offerAmount = Math.round(monthlyPayment); // Final offer = monthly payment
+      const offerAmount = Math.round(monthlyPayment); // Final offer = monthly payment
 
-      return {
-        ...propertyData,
-        offerAmount,
-        arvPctUsed: 110,
-        offerType: state.offerType,
-        asIsValue,
-        downPayment: Math.round(downPayment),
-        price: Math.round(price),
-        monthlyPayment: parseFloat(monthlyPayment.toFixed(2)),
-        longLengthInMonths,
-      };
-    },
-    [state.offerType]
-  );
+      return {
+        ...propertyData,
+        offerAmount,
+        arvPctUsed: 110,
+        offerType: state.offerType,
+        asIsValue,
+        downPayment: Math.round(downPayment),
+        price: Math.round(price),
+        monthlyPayment: parseFloat(monthlyPayment.toFixed(2)),
+        longLengthInMonths,
+      };
+    },
+    [state.offerType]
+  );
 
   // Generate offer
   const generateOffer = useCallback(async () => {
