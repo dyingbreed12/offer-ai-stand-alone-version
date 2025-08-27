@@ -127,7 +127,13 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                 <div>
                   <h3 className="offer-address">{offer.address}</h3>
                   <div className="offer-status">
-                    {offer.offerType === 'cash' ? '💵' : '🎨'}{' '}
+                   {offer.offerType === "cash"
+                    ? "💵"
+                    : offer.offerType === "creative"
+                    ? "🎨"
+                    : offer.offerType === "novation"
+                    ? "📝"
+                    : "📊"}
                     {offer.offerType.charAt(0).toUpperCase() + offer.offerType.slice(1)} Offer
                   </div>
                 </div>

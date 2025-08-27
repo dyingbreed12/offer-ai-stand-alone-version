@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useAppContext } from '@/context/AppContext';
-import { useState, useEffect } from 'react';
-import { Opportunity, Property, CustomField } from '@/lib/types';
+import { useAppContext } from "@/context/AppContext";
+import { useState, useEffect } from "react";
+import { Opportunity, Property, CustomField } from "@/lib/types";
 
 export const PropertyInformation = () => {
   const { state, setSearchMode, setSelectedProperty } = useAppContext();
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const [manualAddress, setManualAddress] = useState('');
-  const [manualArv, setManualArv] = useState<number | ''>('');
-  const [manualRepairs, setManualRepairs] = useState<number | ''>('');
-  const [manualNotes, setManualNotes] = useState('');
+  const [manualAddress, setManualAddress] = useState("");
+  const [manualArv, setManualArv] = useState<number | "">("");
+  const [manualRepairs, setManualRepairs] = useState<number | "">("");
+  const [manualNotes, setManualNotes] = useState("");
 
-  const handleSearchModeClick = (mode: 'search' | 'manual') => {
+  const handleSearchModeClick = (mode: "search" | "manual") => {
     setSearchMode(mode);
 
-    if (mode === 'manual') {
+    if (mode === "manual") {
       // Reset when switching to manual
       setSelectedProperty(null);
     }
@@ -27,31 +27,33 @@ export const PropertyInformation = () => {
 
   const clearSelection = () => {
     setSelectedProperty(null);
-    setQuery('');
+    setQuery("");
     setResults([]);
   };
 
   useEffect(() => {
-    if (state.searchMode === 'manual') {
-      const isCreativeAndManual = state.searchMode === 'manual' && state.offerType === 'creative';
-      
-      if (isCreativeAndManual) {
-        if (manualArv !== '') {
+    if (state.searchMode === "manual") {
+      const isCreativeNovationZestimate = ["creative", "novation", "zestimate"].includes(
+        state.offerType
+      );
+
+      if (isCreativeNovationZestimate) {
+        if (manualAddress && manualArv !== "") {
           const property: Property = {
-            id: 'manual-entry',
+            id: "manual-entry",
             name: manualAddress,
             address: manualAddress,
             arv: Number(manualArv),
-            repairs: Number(manualRepairs),
+            repairs: 0,
           };
           setSelectedProperty(property);
         } else {
           setSelectedProperty(null);
         }
       } else {
-        if (manualAddress && manualArv !== '' && manualRepairs !== '') {
+        if (manualAddress && manualArv !== "" && manualRepairs !== "") {
           const property: Property = {
-            id: 'manual-entry',
+            id: "manual-entry",
             name: manualAddress,
             address: manualAddress,
             arv: Number(manualArv),
@@ -63,31 +65,34 @@ export const PropertyInformation = () => {
         }
       }
     }
-  }, [manualAddress, manualArv, manualRepairs, manualNotes, state.searchMode, state.offerType, setSelectedProperty]);
+  }, [manualAddress, manualArv, manualRepairs, state.searchMode, state.offerType, setSelectedProperty]);
 
   useEffect(() => {
     if (query.length < 3) return;
+
     const fetchData = async () => {
       setLoading(true);
       try {
         const res = await fetch(`/api/opportunities?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data.opportunities || []);
+        setResults(Array.isArray(data.opportunities) ? data.opportunities : []);
       } catch (err) {
-        console.error('Search error:', err);
+        console.error("Search error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     const delay = setTimeout(fetchData, 400);
     return () => clearTimeout(delay);
   }, [query]);
 
   const handleSelect = (opportunity: Opportunity) => {
     const arvField: CustomField | undefined = opportunity.customFields.find(
-      (f) => f.id === 'wuSG63CwYz9EksTUtgH1'
+      (f) => f.id === "wuSG63CwYz9EksTUtgH1"
     );
     const repairsField: CustomField | undefined = opportunity.customFields.find(
-      (f) => f.id === 'had1BxDw5o9zd9i63jrq'
+      (f) => f.id === "had1BxDw5o9zd9i63jrq"
     );
 
     const property: Property = {
@@ -103,7 +108,9 @@ export const PropertyInformation = () => {
     setQuery(opportunity.name);
   };
 
-  const hideForCreative = state.searchMode === 'manual' && state.offerType === 'creative';
+  const hideRepairsAndChangeArvLabel = ["creative", "novation", "zestimate"].includes(
+    state.offerType
+  );
 
   return (
     <div className="content-container">
@@ -119,16 +126,16 @@ export const PropertyInformation = () => {
         {/* Search Mode Toggle */}
         <div className="search-mode-toggle">
           <button
-            className={`mode-toggle-btn ${state.searchMode === 'search' ? 'active' : ''}`}
-            onClick={() => handleSearchModeClick('search')}
+            className={`mode-toggle-btn ${state.searchMode === "search" ? "active" : ""}`}
+            onClick={() => handleSearchModeClick("search")}
             type="button"
           >
             <div className="mode-icon">🔍</div>
             <span>Search GHL Opportunities</span>
           </button>
           <button
-            className={`mode-toggle-btn ${state.searchMode === 'manual' ? 'active' : ''}`}
-            onClick={() => handleSearchModeClick('manual')}
+            className={`mode-toggle-btn ${state.searchMode === "manual" ? "active" : ""}`}
+            onClick={() => handleSearchModeClick("manual")}
             type="button"
           >
             <div className="mode-icon">✋</div>
@@ -137,10 +144,12 @@ export const PropertyInformation = () => {
         </div>
 
         {/* Search Mode Content */}
-        {state.searchMode === 'search' && (
+        {state.searchMode === "search" && (
           <div className="search-content">
             <div className="search-input-group">
-              <label className="search-label">Search Address or Property Name</label>
+              <label className="search-label" htmlFor="address-search">
+                Search Address or Property Name
+              </label>
               <input
                 type="text"
                 id="address-search"
@@ -174,8 +183,8 @@ export const PropertyInformation = () => {
                   <div className="property-details">
                     <h3 className="property-address">{state.selectedProperty.address}</h3>
                     <p className="property-meta">
-                      ARV: ${state.selectedProperty.arv?.toLocaleString() || '0'} | Repairs: $
-                      {state.selectedProperty.repairs?.toLocaleString() || '0'}
+                      ARV: ${state.selectedProperty.arv?.toLocaleString() || "0"} | Repairs: $
+                      {state.selectedProperty.repairs?.toLocaleString() || "0"}
                     </p>
                   </div>
                 </div>
@@ -188,12 +197,13 @@ export const PropertyInformation = () => {
         )}
 
         {/* Manual Mode Content */}
-        {state.searchMode === 'manual' && (
+        {state.searchMode === "manual" && (
           <div className="manual-content">
             <div className="manual-form-grid">
+              {/* ARV */}
               <div className="form-field">
                 <label htmlFor="manual-arv" className="field-label">
-                  {hideForCreative ? 'As Is Value' : 'ARV (After Repair Value)'}
+                  {hideRepairsAndChangeArvLabel ? "As Is Value" : "ARV (After Repair Value)"}
                 </label>
                 <div className="input-with-prefix">
                   <span className="input-prefix">$</span>
@@ -201,13 +211,15 @@ export const PropertyInformation = () => {
                     type="number"
                     id="manual-arv"
                     value={manualArv}
-                    onChange={(e) => setManualArv(e.target.value ? Number(e.target.value) : '')}
+                    onChange={(e) => setManualArv(e.target.value ? Number(e.target.value) : "")}
                     placeholder="250,000"
                     className="field-input with-prefix"
                   />
                 </div>
               </div>
-              {!hideForCreative && (
+
+              {/* Repairs */}
+              {!hideRepairsAndChangeArvLabel && (
                 <div className="form-field">
                   <label htmlFor="manual-repairs" className="field-label">
                     Estimated Repair Costs
@@ -218,7 +230,9 @@ export const PropertyInformation = () => {
                       type="number"
                       id="manual-repairs"
                       value={manualRepairs}
-                      onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
+                      onChange={(e) =>
+                        setManualRepairs(e.target.value ? Number(e.target.value) : "")
+                      }
                       placeholder="25,000"
                       className="field-input with-prefix"
                     />

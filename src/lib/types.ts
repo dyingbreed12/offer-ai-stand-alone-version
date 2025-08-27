@@ -1,6 +1,6 @@
 // src/lib/types.ts
 
-export type OfferType = 'cash' | 'creative';
+export type OfferType = 'cash' | 'creative' | 'novation' | 'zestimate';
 export type SearchMode = 'search' | 'manual';
 export type OfferStatus = 'active' | 'pending' | 'archived' | 'new';
 
