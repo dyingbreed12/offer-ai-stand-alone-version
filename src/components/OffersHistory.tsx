@@ -91,8 +91,10 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
               onChange={(e) => setFilterType(e.target.value)}
             >
               <option value="all">All Offer Types</option>
-              <option value="cash">Cash Offers</option>
-              <option value="creative">Creative Offers</option>
+              <option value="cash">Fix and Flip Offers</option>
+              <option value="creative">Seller Finance Offers</option>
+              <option value="zestimate">Zillow Offers</option>
+              <option value="novation">Novation Offers</option>
             </select>
           </div>
           <div className="filter-group">
@@ -128,13 +130,13 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                   <h3 className="offer-address">{offer.address}</h3>
                   <div className="offer-status">
                     {offer.offerType === 'cash'
-                      ? '💵'
+                      ? '💵 Fix and Flip '
                       : offer.offerType === 'creative'
-                      ? '🎨'
+                      ? '🎨 Seller Finance '
                       : offer.offerType === 'novation'
-                      ? '📝'
-                      : '📊'}
-                    {offer.offerType.charAt(0).toUpperCase() + offer.offerType.slice(1)} Offer
+                      ? '📝 Novation '
+                      : '📊 Zillow '}
+                     Offer
                   </div>
                 </div>
                 <button

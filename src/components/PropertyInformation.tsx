@@ -74,7 +74,10 @@ export const PropertyInformation = () => {
   }, [manualAddress, manualArv, manualRepairs, manualAsIsValue, state.searchMode, state.offerType, setSelectedProperty]);
 
   useEffect(() => {
-    if (query.length < 3) return;
+    if (query.length < 3) {
+      setResults([]);
+      return;
+    }
 
     const fetchData = async () => {
       setLoading(true);
@@ -114,7 +117,7 @@ export const PropertyInformation = () => {
     };
 
     setSelectedProperty(property);
-    setResults([]);
+    setResults([]); // ✅ FIX: Clear search results after selection
     setQuery(opportunity.name);
   };
 
@@ -171,7 +174,8 @@ export const PropertyInformation = () => {
 
             {loading && <div className="text-sm mt-2">Searching...</div>}
 
-            {results.length > 0 && (
+            {/* Render results only if not loading and a property hasn't been selected */}
+            {!loading && !state.selectedProperty && results.length > 0 && (
               <ul className="border mt-2 rounded-lg bg-white shadow">
                 {results.map((op) => (
                   <li
