@@ -22,8 +22,7 @@ export const ThinkingAnimation = () => (
         </div>
         <h3 className="thinking-title">AI is Analyzing Your Property...</h3>
         <p className="thinking-description">
-          Our advanced algorithms are processing market data, comparable sales, and repair estimates to calculate your
-          optimal offer.
+         Prepping a disrespectful number…
         </p>
         <div className="thinking-dots">
           <div className="thinking-dot"></div>

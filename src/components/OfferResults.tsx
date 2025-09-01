@@ -114,13 +114,13 @@ This offer was generated using professional real estate investment calculations 
   const getOfferTypeText = (type: string) => {
     switch (type) {
       case 'cash':
-        return 'Cash Offer';
+        return 'Fix & Flip';
       case 'creative':
-        return 'Creative Offer';
+        return 'Seller Finance';
       case 'novation':
-        return 'Novation Offer';
+        return 'Novation';
       case 'zestimate':
-        return 'Zestimate Offer';
+        return 'Zillow';
       default:
         return 'Unknown';
     }
@@ -169,7 +169,7 @@ This offer was generated using professional real estate investment calculations 
           {/* Title */}
           <h2 className="offer-results-title">
             <span className="target-icon">🎯</span>
-            Your Recommended Offer
+            Your Lowball Offer
           </h2>
 
           {/* Big Offer Number */}
@@ -188,7 +188,7 @@ This offer was generated using professional real estate investment calculations 
             <div className="offer-breakdown">
               {/* General Breakdown for 'cash' and 'creative' types */}
 
-              <h3 className="breakdown-title">Detailed Calculation Breakdown</h3>
+              <h3 className="breakdown-title">Breakdown</h3>
               {offer.offerType === 'cash' && (
               <div className="breakdown-row">
                 <div className="breakdown-item">

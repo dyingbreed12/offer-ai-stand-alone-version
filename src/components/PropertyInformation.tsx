@@ -118,8 +118,7 @@ export const PropertyInformation = () => {
         <div className="section-header-centered">
           <h2 className="section-title">Property Information</h2>
           <p className="section-description">
-            Search your HighLevel CRM opportunities or enter property details manually for
-            accurate offer calculations.
+           Search your Assigns CRM deals or enter property details manually for instant lowball AI offers.
           </p>
         </div>
 
@@ -131,7 +130,7 @@ export const PropertyInformation = () => {
             type="button"
           >
             <div className="mode-icon">🔍</div>
-            <span>Search GHL Opportunities</span>
+            <span>Search Deals</span>
           </button>
           <button
             className={`mode-toggle-btn ${state.searchMode === "manual" ? "active" : ""}`}

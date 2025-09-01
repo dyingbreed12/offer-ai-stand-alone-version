@@ -114,7 +114,7 @@ export default function Home() {
         offerAmount -= repairs * 2;
       }
 
-      offerAmount -= 20000;
+      offerAmount -= 30000;
 
       // Ensure minimum > 0
       offerAmount = Math.max(offerAmount, 1000);

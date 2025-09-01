@@ -272,6 +272,22 @@ select option {
     justify-content: center;
 }
 
+.action-btn.wholesale-calc {
+    padding: 16px 32px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+    justify-content: center;
+    color: black;
+}
+
 .action-btn.save {
     background: #059669;
     color: white;
