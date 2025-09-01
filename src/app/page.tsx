@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { Offer, Property } from '@/lib/types';
+import { Offer } from '@/lib/types';
 
 // Components
 import { HeroSection } from '@/components/HeroSection';
@@ -61,15 +61,15 @@ export default function Home() {
     } else { // Manual mode
       const arv = parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value);
       const asIsValue = parseFloat((document.getElementById('manual-asisvalue') as HTMLInputElement)?.value);
-      
+
       // Validation for Creative, Novation, and Zestimate (only As Is Value required)
       if (['creative', 'novation', 'zestimate'].includes(state.offerType)) {
         return !isNaN(asIsValue) && asIsValue > 0;
       }
-      
+
       // Validation for Cash Offer (ARV and Repairs required)
       const repairs = parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value);
-      
+
       return !isNaN(arv) && arv > 0 && !isNaN(repairs) && repairs >= 0;
     }
   }, [state.searchMode, state.selectedProperty, state.offerType]);
@@ -199,7 +199,7 @@ export default function Home() {
     [state.offerType]
   );
 
-  // PropertyInformation.tsx
+  // ✅ UPDATED: Added retry logic
   const updateLowballOffer = async (offerAmount: number) => {
     if (!state.selectedProperty || !state.selectedProperty.id || state.selectedProperty.id === 'manual-entry') {
       console.warn('No valid opportunity selected to update.');
@@ -207,30 +207,40 @@ export default function Home() {
     }
 
     const opportunityId = state.selectedProperty.id;
+    const maxRetries = 3;
+    let retries = 0;
 
-    try {
-      const response = await fetch('/api/opportunities', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          opportunityId: opportunityId,
-          customFieldId: 'l2yfsdwszG1RPku6ROXk', // The custom field ID for the Lowball AI Offer
-          field_value: offerAmount,
-        }),
-      });
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch('/api/opportunities', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            opportunityId: opportunityId,
+            customFieldId: 'l2yfsdwszG1RPku6ROXk',
+            field_value: offerAmount,
+          }),
+        });
 
-      if (response.ok) {
-        console.log('fieldvalue ', offerAmount);
-        console.log('Successfully updated custom field for opportunity:', opportunityId);
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to update custom field:', response.status, errorData);
+        if (response.ok) {
+          console.log('Successfully updated custom field for opportunity:', opportunityId);
+          return; // Exit the function on success
+        } else {
+          const errorData = await response.json();
+          console.error(`Attempt ${retries + 1} failed:`, response.status, errorData);
+          retries++;
+          await new Promise(res => setTimeout(res, 1000 * retries)); // Exponential backoff
+        }
+      } catch (error) {
+        console.error(`API call error on attempt ${retries + 1}:`, error);
+        retries++;
+        await new Promise(res => setTimeout(res, 1000 * retries));
       }
-    } catch (error) {
-      console.error('API call error:', error);
     }
+    console.error(`Failed to update custom field after ${maxRetries} attempts.`);
+    showToast('error', 'Update Failed', `Could not update the CRM after ${maxRetries} attempts.`);
   };
 
   // Generate offer
@@ -298,6 +308,7 @@ export default function Home() {
     setCurrentOffer,
     state.offerType,
     state.selectedProperty,
+    updateLowballOffer,
   ]);
 
   const isButtonDisabled = !validateInputs() || state.isProcessing;

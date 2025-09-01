@@ -190,51 +190,51 @@ This offer was generated using professional real estate investment calculations 
 
               <h3 className="breakdown-title">Breakdown</h3>
               {offer.offerType === 'cash' && (
-              <div className="breakdown-row">
-                <div className="breakdown-item">
-                  <span className="breakdown-label">Property ARV:</span>
-                  <span className="breakdown-value">${offer.arv?.toLocaleString()}</span>
+                <div className="breakdown-row">
+                  <div className="breakdown-item no-border-or-padding">
+                    <span className="breakdown-label">Property ARV:</span>
+                    <span className="breakdown-value">${offer.arv?.toLocaleString()}</span>
+                  </div>
+                  <div className="breakdown-item no-border-or-padding">
+                    <span className="breakdown-label">Repairs:</span>
+                    <span className="breakdown-value">${offer.repairs?.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="breakdown-item">
-                  <span className="breakdown-label">Repairs:</span>
-                  <span className="breakdown-value">${offer.repairs?.toLocaleString()}</span>
-                </div>
-              </div>
               )}
 
               {/* Additional rows for specific offer types */}
               {offer.offerType === 'creative' && (
-                <div className="offer-breakdown">
+                <>
                   <div className="breakdown-row">
-                    <div className="breakdown-item">
+                    <div className="breakdown-item no-border-or-padding">
                       <span className="breakdown-label">As-Is Value:</span>
                       <span className="breakdown-value">${offer.asIsValue?.toLocaleString()}</span>
                     </div>
-                    <div className="breakdown-item">
+                    <div className="breakdown-item no-border-or-padding">
                       <span className="breakdown-label">Downpayment:</span>
                       <span className="breakdown-value">${offer.downPayment?.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="breakdown-row">
-                    <div className="breakdown-item">
+                    <div className="breakdown-item no-border-or-padding">
                       <span className="breakdown-label">Price:</span>
                       <span className="breakdown-value">${offer.price?.toLocaleString()}</span>
                     </div>
-                    <div className="breakdown-item">
+                    <div className="breakdown-item no-border-or-padding">
                       <span className="breakdown-label">Term Length:</span>
                       <span className="breakdown-value">{offer.longLengthInMonths} months</span>
                     </div>
                   </div>
 
-                <div className="final-offer-section">
-                <div className="final-offer-item">
-                  <span className="final-offer-label">Final Offer (Monthly):</span>
-                  <span className="final-offer-value">
-                    ${offer.monthlyPayment?.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-              </div>
+                  <div className="final-offer-section">
+                    <div className="final-offer-item no-border-or-padding">
+                      <span className="final-offer-label">Final Offer (Monthly):</span>
+                      <span className="final-offer-value">
+                        ${offer.monthlyPayment?.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           )}

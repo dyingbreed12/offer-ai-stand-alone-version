@@ -127,13 +127,13 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                 <div>
                   <h3 className="offer-address">{offer.address}</h3>
                   <div className="offer-status">
-                   {offer.offerType === "cash"
-                    ? "💵"
-                    : offer.offerType === "creative"
-                    ? "🎨"
-                    : offer.offerType === "novation"
-                    ? "📝"
-                    : "📊"}
+                    {offer.offerType === 'cash'
+                      ? '💵'
+                      : offer.offerType === 'creative'
+                      ? '🎨'
+                      : offer.offerType === 'novation'
+                      ? '📝'
+                      : '📊'}
                     {offer.offerType.charAt(0).toUpperCase() + offer.offerType.slice(1)} Offer
                   </div>
                 </div>
@@ -160,6 +160,25 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                     </>
                   )}
                 </div>
+
+                {/* New: Display creative offer details */}
+                {offer.offerType === 'creative' && (
+                  <div className="mt-4 text-sm text-gray-400 border-t border-gray-700 pt-3">
+                    <div className="flex justify-between mb-1">
+                      <span>Downpayment:</span>
+                      <span className="font-semibold text-gray-200">${offer.downPayment?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between mb-1">
+                      <span>Loan Length:</span>
+                      <span className="font-semibold text-gray-200">{offer.longLengthInMonths} months</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Price:</span>
+                      <span className="font-semibold text-gray-200">${offer.price?.toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+                
                 <div className="offer-date">
                   Generated on {new Date(offer.createdAt).toLocaleDateString()}
                 </div>
@@ -178,7 +197,7 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
             />
             <h3 className="empty-title">No Offers Saved Yet</h3>
             <p className="empty-description">
-                You haven&apos;t generated any offers yet. Create your first professional offer to get started!
+              You haven&apos;t generated any offers yet. Create your first professional offer to get started!
             </p>
             <button
               className="empty-action-btn"

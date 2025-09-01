@@ -13,15 +13,17 @@ export const ThinkingAnimation = () => (
           </div>
           <div className="robot-brain">
             <Image
-              src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f7551613-df7a-41e8-9e64-4857fcf2e5ff.png"
+              src="/images/brain_animated.png"
               alt="Spinning brain icon representing AI processing"
               width={20}
               height={20}
             />
           </div>
         </div>
-        <h3 className="thinking-title">AI is Analyzing Your Property...</h3>
+        <h3 className="thinking-title">Lowball AI is Analyzing Your Property...</h3>
         <p className="thinking-description">
+          Our advanced algorithms are processing market data, comparable sales, and repair estimates to calculate your
+          optimal offer. <br/>
          Prepping a disrespectful number…
         </p>
         <div className="thinking-dots">
