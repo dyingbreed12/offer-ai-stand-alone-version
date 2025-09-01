@@ -10,7 +10,9 @@ export interface Property {
   address: string;
   arv: number;
   repairs: number;
-  status?: string; // Optional, as it's from mockOpportunities
+  status?: string;
+  // Add asIsValue to the Property interface
+  asIsValue?: number;
 }
 
 // 🔥 Extended Offer to support both cash + creative
@@ -26,11 +28,11 @@ export interface Offer {
   status: OfferStatus;
 
   // Optional fields only used for Creative offers
-  asIsValue?: number;          // Spreadsheet E6
-  downPayment?: number;        // Spreadsheet E10
-  price?: number;              // Spreadsheet E11
-  longLengthInMonths?: number; // Default 360
-  monthlyPayment?: number;     // Spreadsheet E12
+  asIsValue?: number;
+  downPayment?: number;
+  price?: number;
+  longLengthInMonths?: number;
+  monthlyPayment?: number;
 }
 
 export interface AppState {

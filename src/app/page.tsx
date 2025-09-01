@@ -1,9 +1,8 @@
-// src/app/page.tsx
 'use client';
 
 import { useState, useCallback } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { Offer } from '@/lib/types';
+import { Offer, Property } from '@/lib/types';
 
 // Components
 import { HeroSection } from '@/components/HeroSection';
@@ -23,6 +22,7 @@ interface PropertyData {
   arv: number;
   repairs: number;
   notes?: string;
+  asIsValue?: number;
   manualDownPayment?: number;
 }
 
@@ -54,16 +54,17 @@ export default function Home() {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  // ✅ Updated Validation function
+  // ✅ UPDATED: Validation function to check the correct input field
   const validateInputs = useCallback(() => {
     if (state.searchMode === 'search') {
       return state.selectedProperty !== null;
     } else { // Manual mode
       const arv = parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value);
+      const asIsValue = parseFloat((document.getElementById('manual-asisvalue') as HTMLInputElement)?.value);
       
-      // Validation for Creative, Novation, and Zestimate (only ARV required)
+      // Validation for Creative, Novation, and Zestimate (only As Is Value required)
       if (['creative', 'novation', 'zestimate'].includes(state.offerType)) {
-        return !isNaN(arv) && arv > 0;
+        return !isNaN(asIsValue) && asIsValue > 0;
       }
       
       // Validation for Cash Offer (ARV and Repairs required)
@@ -73,33 +74,44 @@ export default function Home() {
     }
   }, [state.searchMode, state.selectedProperty, state.offerType]);
 
-  // Get property data
+  // ✅ UPDATED: Get property data from the correct input field or selected property
   const getPropertyData = useCallback((): PropertyData => {
     if (state.searchMode === 'search' && state.selectedProperty) {
+      const selectedProp = state.selectedProperty;
       return {
-        address: state.selectedProperty.address,
-        arv: state.selectedProperty.arv || 0,
-        repairs: state.selectedProperty.repairs || 0,
-        notes: state.selectedProperty.name || '',
+        address: selectedProp.address,
+        arv: selectedProp.arv || 0,
+        repairs: selectedProp.repairs || 0,
+        notes: selectedProp.name || '',
+        asIsValue: selectedProp.asIsValue || 0,
       };
     } else {
       const manualDownPaymentEl = document.getElementById('manual-downpayment') as HTMLInputElement | null;
       const manualDownPayment = manualDownPaymentEl ? parseFloat(manualDownPaymentEl.value) : undefined;
-      
-      const repairsValue = state.offerType === 'creative' ? 0 : parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value) || 0;
       const addressValue = (document.getElementById('manual-address') as HTMLInputElement)?.value.trim() || '';
 
-      return {
-        address: addressValue,
-        arv: parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value) || 0,
-        repairs: repairsValue,
-        notes: (document.getElementById('manual-notes') as HTMLInputElement)?.value.trim() || '',
-        manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
-      };
+      if (['creative', 'novation', 'zestimate'].includes(state.offerType)) {
+        return {
+          address: addressValue,
+          arv: 0,
+          repairs: 0,
+          notes: (document.getElementById('manual-notes') as HTMLInputElement)?.value.trim() || '',
+          asIsValue: parseFloat((document.getElementById('manual-asisvalue') as HTMLInputElement)?.value) || 0,
+          manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
+        };
+      } else { // Cash offer
+        return {
+          address: addressValue,
+          arv: parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value) || 0,
+          repairs: parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value) || 0,
+          notes: (document.getElementById('manual-notes') as HTMLInputElement)?.value.trim() || '',
+          manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
+        };
+      }
     }
   }, [state.searchMode, state.selectedProperty, state.offerType]);
 
-  // Cash Offer Calculation
+  // Cash Offer Calculation (No Change)
   const calculateOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
       const { arv, repairs, manualDownPayment } = propertyData;
@@ -116,7 +128,6 @@ export default function Home() {
 
       offerAmount -= 30000;
 
-      // Ensure minimum > 0
       offerAmount = Math.max(offerAmount, 1000);
 
       return {
@@ -129,19 +140,17 @@ export default function Home() {
     [state.offerType]
   );
 
-    // Creative Offer Calculation
+  // ✅ UPDATED: Creative Offer Calculation uses asIsValue
   const calculateCreativeOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
-      const { arv } = propertyData;
-      const asIsValue = arv ?? 0;
+      const asIsValue = propertyData.asIsValue ?? 0;
       const longLengthInMonths = 360;
 
-      // ✅ UPDATED: Calculation for downPayment based on the new formula
       const downPayment = asIsValue * 1.1 * 0.05;
       const price = asIsValue * 1.1;
       const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
 
-      const offerAmount = Math.round(monthlyPayment); // Final offer = monthly payment
+      const offerAmount = Math.round(monthlyPayment);
 
       return {
         ...propertyData,
@@ -158,71 +167,71 @@ export default function Home() {
     [state.offerType]
   );
 
-  // New Novation Offer Calculation
+  // ✅ UPDATED: Novation Offer Calculation uses asIsValue
   const calculateNovationOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
-      const { arv } = propertyData;
-      const offerAmount = 0.9 * arv - 40000;
+      const asIsValue = propertyData.asIsValue ?? 0;
+      const offerAmount = 0.9 * asIsValue - 40000;
 
       return {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
         offerType: state.offerType,
+        asIsValue,
       };
     },
     [state.offerType]
   );
 
-  // New Zestimate Offer Calculation
+  // ✅ UPDATED: Zestimate Offer Calculation uses asIsValue
   const calculateZestimateOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
-      const { arv } = propertyData;
-      const offerAmount = 0.65 * arv;
+      const asIsValue = propertyData.asIsValue ?? 0;
+      const offerAmount = 0.65 * asIsValue;
 
       return {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
         offerType: state.offerType,
+        asIsValue,
       };
     },
     [state.offerType]
   );
 
-    // PropertyInformation.tsx
-    const updateLowballOffer = async (offerAmount: number) => {
-        // Ensure an opportunity is selected and has a valid ID
-        if (!state.selectedProperty || !state.selectedProperty.id || state.selectedProperty.id === "manual-entry") {
-            console.warn("No valid opportunity selected to update.");
-            return;
-        }
+  // PropertyInformation.tsx
+  const updateLowballOffer = async (offerAmount: number) => {
+    if (!state.selectedProperty || !state.selectedProperty.id || state.selectedProperty.id === 'manual-entry') {
+      console.warn('No valid opportunity selected to update.');
+      return;
+    }
 
-        const opportunityId = state.selectedProperty.id;
+    const opportunityId = state.selectedProperty.id;
 
-        try {
-            // Correct fetch URL to match your file structure: /api/opportunities
-            const response = await fetch("/api/opportunities", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    opportunityId: opportunityId,
-                    customFieldId: "l2yfsdwszG1RPku6ROXk", // The custom field ID for the Lowball AI Offer
-                    field_value: offerAmount, // ✅ CORRECTED: Changed 'fieldValue' to 'field_value'
-                }),
-            });
+    try {
+      const response = await fetch('/api/opportunities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          opportunityId: opportunityId,
+          customFieldId: 'l2yfsdwszG1RPku6ROXk', // The custom field ID for the Lowball AI Offer
+          field_value: offerAmount,
+        }),
+      });
 
-            if (response.ok) {
-                console.log("fieldvalue ",offerAmount);
-                console.log("Successfully updated custom field for opportunity:", opportunityId);
-            } else {
-                const errorData = await response.json();
-                console.error("Failed to update custom field:", response.status, errorData);
-            }
-        } catch (error) {
-            console.error("API call error:", error);
-        }
-    };
+      if (response.ok) {
+        console.log('fieldvalue ', offerAmount);
+        console.log('Successfully updated custom field for opportunity:', opportunityId);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update custom field:', response.status, errorData);
+      }
+    } catch (error) {
+      console.error('API call error:', error);
+    }
+  };
 
   // Generate offer
   const generateOffer = useCallback(async () => {
@@ -260,11 +269,9 @@ export default function Home() {
         break;
     }
 
-    if(state.selectedProperty && state.selectedProperty.id && state.selectedProperty.id !== "manual-entry") {
-        await updateLowballOffer(partial.offerAmount);
+    if (state.selectedProperty && state.selectedProperty.id && state.selectedProperty.id !== 'manual-entry') {
+      await updateLowballOffer(partial.offerAmount);
     }
-
-    //console.log('Generated Offer Partial:', partial);
 
     const previewOffer: Offer = {
       id: `preview-${Date.now()}`,
@@ -290,6 +297,7 @@ export default function Home() {
     calculateZestimateOffer,
     setCurrentOffer,
     state.offerType,
+    state.selectedProperty,
   ]);
 
   const isButtonDisabled = !validateInputs() || state.isProcessing;
@@ -299,16 +307,16 @@ export default function Home() {
       <HeroSection />
       <NavigationTabs />
 
-    {state.currentTab === 'generator' && (
-    <div className="generator-content">
-      <OfferTypeSelection />
-      <PropertyInformation />
-      <GenerateButton onClick={generateOffer} disabled={isButtonDisabled} />
-      {<ThinkingAnimation />}
-      {!state.isProcessing && state.currentOffer && <OfferResults showToast={showToast} />}
-      <Footer />
-    </div>
-    )}
+      {state.currentTab === 'generator' && (
+        <div className="generator-content">
+          <OfferTypeSelection />
+          <PropertyInformation />
+          <GenerateButton onClick={generateOffer} disabled={isButtonDisabled} />
+          {<ThinkingAnimation />}
+          {!state.isProcessing && state.currentOffer && <OfferResults showToast={showToast} />}
+          <Footer />
+        </div>
+      )}
 
       <OffersHistory showToast={showToast} />
 

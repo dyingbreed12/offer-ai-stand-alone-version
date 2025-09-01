@@ -151,8 +151,8 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                   {offer.offerType === 'creative' ? `$${(offer.monthlyPayment ?? 0).toFixed(2)}` : `$${offer.offerAmount.toLocaleString()}`}
                 </div>
                 <div className="offer-meta">
-                  {offer.offerType === 'creative' ? (
-                    `As Is Value: $${offer.arv.toLocaleString()}`
+                  {offer.offerType !== 'cash' ? (
+                    `As Is Value: $${offer.asIsValue?.toLocaleString()}`
                   ) : (
                     <>
                       ARV: ${offer.arv.toLocaleString()} | Repairs: $
@@ -171,7 +171,7 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
         {filteredAndSortedOffers.length === 0 && (
           <div className="empty-offers">
             <Image
-              src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1cf5ed54-f5b0-4d43-badd-955aaeda8cd2.png"
+              src="/images/saved_folder.png"
               alt="Empty folder representing no saved offers"
               width={60}
               height={60}
