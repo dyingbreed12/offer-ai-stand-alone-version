@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 export const HeroSection = () => (
   <div className="hero-section">
     <div className="max-w-6xl mx-auto text-center">

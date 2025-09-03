@@ -21,7 +21,7 @@ export const PropertyInformation = () => {
   const [manualArv, setManualArv] = useState<number | ''>('');
   const [manualRepairs, setManualRepairs] = useState<number | ''>('');
   const [manualAsIsValue, setManualAsIsValue] = useState<number | ''>('');
-  const [manualNotes, setManualNotes] = useState('');
+//  const [manualNotes, setManualNotes] = useState('');
 
   const handleSearchModeClick = (mode: 'search' | 'manual') => {
     setSearchMode(mode);

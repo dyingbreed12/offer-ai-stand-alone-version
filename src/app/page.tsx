@@ -325,7 +325,7 @@ export default function Home() {
           <GenerateButton onClick={generateOffer} disabled={isButtonDisabled} />
           {<ThinkingAnimation />}
           {!state.isProcessing && state.currentOffer && <OfferResults showToast={showToast} />}
-          {/* <Footer /> */}
+          {<Footer />}
         </div>
       )}
 

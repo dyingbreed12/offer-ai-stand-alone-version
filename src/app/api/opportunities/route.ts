@@ -83,6 +83,7 @@ export async function POST(req: Request) {
         const errorData = await res.json();
         errorDetails = JSON.stringify(errorData, null, 2);
       } catch (e) {
+        console.error("Error parsing JSON response:", e);
         errorDetails = await res.text();
       }
       console.error("External API Response:", errorDetails);
