@@ -1,3 +1,5 @@
+// src/components/NavigationTabs.tsx
+
 'use client';
 
 import { useAppContext } from '@/context/AppContext';

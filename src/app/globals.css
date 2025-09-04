@@ -1955,3 +1955,99 @@ select option {
     padding: 1rem 2rem;
   }
 }
+
+/* Disabled state styling for the icons and text */
+.disabled-icon-and-text {
+  opacity: 0.4;
+}
+
+.offer-type-option.disabled {
+  cursor: not-allowed;
+}
+
+.offer-type-option.disabled:hover {
+  border-color: #e2e8f0; /* Prevents the hover border change on disabled buttons */
+  box-shadow: none; /* Removes the hover shadow on disabled buttons */
+  transform: none; /* Prevents the hover transform on disabled buttons */
+}
+
+/* Styles for DisabledOfferPrompt.tsx */
+/* Styles for the prompt overlay and card */
+.disabled-offer-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.disabled-offer-prompt-card {
+  background-color: #111111;
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.disabled-offer-prompt-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.disabled-offer-prompt-close:hover {
+  color: #ff0000;
+}
+
+/* Styles for the content inside the card */
+.prompt-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.prompt-message {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.prompt-tagline {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.prompt-button {
+  font-family: 'Anton', sans-serif;
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: #111111;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
+}
+
+.prompt-button:hover {
+  background: linear-gradient(145deg, #C1A25B, #69522F);
+  color: #000000;
+  border-color: #A0834A;
+}
