@@ -1,10 +1,12 @@
+// src/components/ThinkingAnimation.tsx
+
 'use client';
 
 import Image from 'next/image';
 
 export const ThinkingAnimation = () => (
   <div className="content-container">
-    <div id="thinking-animation" className="hidden thinking-section">
+    <div id="thinking-animation" className="thinking-section">
       <div className="robot-container">
         <div className="robot-head">
           <div className="robot-eyes">
@@ -22,7 +24,7 @@ export const ThinkingAnimation = () => (
         </div>
         <h3 className="thinking-title">Lowball AI is Analyzing Your Property...</h3>
         <p className="thinking-description">
-         Prepping a disrespectful number…
+          Prepping a disrespectful number…
         </p>
         <div className="thinking-dots">
           <div className="thinking-dot"></div>

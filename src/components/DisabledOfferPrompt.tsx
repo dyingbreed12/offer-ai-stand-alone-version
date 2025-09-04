@@ -14,11 +14,11 @@ export const DisabledOfferPrompt: React.FC<DisabledOfferPromptProps> = ({ onClos
         <div className="disabled-offer-prompt-content">
           <h3 className="prompt-title">Want more advanced calculators?</h3>
           <p className="prompt-message">
-            Sign up at WholesaleCalculators.com 
+            Sign up at WholesaleCalculators.com
             <span role="img" aria-label="finger pointing right">👉</span>
           </p>
           <p className="prompt-tagline">
-            The world's best real estate wholesaling calculators
+            The world&apos;s best real estate wholesaling calculators
           </p>
           <a
             href="https://wholesalecalculators.com/"

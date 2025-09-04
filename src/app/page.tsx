@@ -56,27 +56,23 @@ export default function Home() {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  // ✅ UPDATED: Validation function to check the correct input field
   const validateInputs = useCallback(() => {
     if (state.searchMode === 'search') {
       return state.selectedProperty !== null;
-    } else { // Manual mode
+    } else {
       const arv = parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value);
       const asIsValue = parseFloat((document.getElementById('manual-asisvalue') as HTMLInputElement)?.value);
 
-      // Validation for Creative, Novation, and Zestimate (only As Is Value required)
       if (['creative', 'novation', 'zestimate'].includes(state.offerType)) {
         return !isNaN(asIsValue) && asIsValue > 0;
       }
 
-      // Validation for Cash Offer (ARV and Repairs required)
       const repairs = parseFloat((document.getElementById('manual-repairs') as HTMLInputElement)?.value);
 
       return !isNaN(arv) && arv > 0 && !isNaN(repairs) && repairs >= 0;
     }
   }, [state.searchMode, state.selectedProperty, state.offerType]);
 
-  // ✅ UPDATED: Get property data from the correct input field or selected property
   const getPropertyData = useCallback((): PropertyData => {
     if (state.searchMode === 'search' && state.selectedProperty) {
       const selectedProp = state.selectedProperty;
@@ -101,7 +97,7 @@ export default function Home() {
           asIsValue: parseFloat((document.getElementById('manual-asisvalue') as HTMLInputElement)?.value) || 0,
           manualDownPayment: !isNaN(manualDownPayment!) ? manualDownPayment : undefined,
         };
-      } else { // Cash offer
+      } else {
         return {
           address: addressValue,
           arv: parseFloat((document.getElementById('manual-arv') as HTMLInputElement)?.value) || 0,
@@ -113,13 +109,10 @@ export default function Home() {
     }
   }, [state.searchMode, state.selectedProperty, state.offerType]);
 
-  // Cash Offer Calculation (No Change)
   const calculateOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
       const { arv, repairs, manualDownPayment } = propertyData;
-
       let offerAmount = arv * 0.9;
-
       if (repairs < 30000) {
         offerAmount -= repairs + 30000;
       } else if (repairs > arv * 0.1) {
@@ -127,11 +120,8 @@ export default function Home() {
       } else {
         offerAmount -= repairs * 2;
       }
-
       offerAmount -= 30000;
-
       offerAmount = Math.max(offerAmount, 1000);
-
       return {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
@@ -142,18 +132,14 @@ export default function Home() {
     [state.offerType]
   );
 
-  // ✅ UPDATED: Creative Offer Calculation uses asIsValue
   const calculateCreativeOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
       const asIsValue = propertyData.asIsValue ?? 0;
       const longLengthInMonths = 360;
-
       const downPayment = asIsValue * 1.1 * 0.05;
       const price = asIsValue * 1.1;
       const monthlyPayment = ((asIsValue - downPayment) * 1.1) / longLengthInMonths;
-
       const offerAmount = Math.round(monthlyPayment);
-
       return {
         ...propertyData,
         offerAmount,
@@ -169,12 +155,10 @@ export default function Home() {
     [state.offerType]
   );
 
-  // ✅ UPDATED: Novation Offer Calculation uses asIsValue
   const calculateNovationOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
       const asIsValue = propertyData.asIsValue ?? 0;
       const offerAmount = 0.9 * asIsValue - 40000;
-
       return {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
@@ -185,12 +169,10 @@ export default function Home() {
     [state.offerType]
   );
 
-  // ✅ UPDATED: Zestimate Offer Calculation uses asIsValue
   const calculateZestimateOffer = useCallback(
     (propertyData: PropertyData): OfferPartial => {
       const asIsValue = propertyData.asIsValue ?? 0;
       const offerAmount = 0.65 * asIsValue;
-
       return {
         ...propertyData,
         offerAmount: Math.round(offerAmount),
@@ -201,17 +183,14 @@ export default function Home() {
     [state.offerType]
   );
 
-  // ✅ UPDATED: Added retry logic
-  const updateLowballOffer = async (offerAmount: number) => {
+  const updateLowballOffer = useCallback(async (offerAmount: number) => {
     if (!state.selectedProperty || !state.selectedProperty.id || state.selectedProperty.id === 'manual-entry') {
       console.warn('No valid opportunity selected to update.');
       return;
     }
-
     const opportunityId = state.selectedProperty.id;
     const maxRetries = 3;
     let retries = 0;
-
     while (retries < maxRetries) {
       try {
         const response = await fetch('/api/opportunities', {
@@ -225,15 +204,14 @@ export default function Home() {
             field_value: offerAmount,
           }),
         });
-
         if (response.ok) {
           console.log('Successfully updated custom field for opportunity:', opportunityId);
-          return; // Exit the function on success
+          return;
         } else {
           const errorData = await response.json();
           console.error(`Attempt ${retries + 1} failed:`, response.status, errorData);
           retries++;
-          await new Promise(res => setTimeout(res, 1000 * retries)); // Exponential backoff
+          await new Promise(res => setTimeout(res, 1000 * retries));
         }
       } catch (error) {
         console.error(`API call error on attempt ${retries + 1}:`, error);
@@ -243,29 +221,12 @@ export default function Home() {
     }
     console.error(`Failed to update custom field after ${maxRetries} attempts.`);
     showToast('error', 'Update Failed', `Could not update the CRM after ${maxRetries} attempts.`);
-  };
+  }, [state.selectedProperty, showToast]);
 
-  // Generate offer
-  const generateOffer = useCallback(async () => {
-    if (!validateInputs() || state.isProcessing) {
-      console.log('Validation failed or already processing');
-      return;
-    }
-
-    setIsProcessing(true);
-
-    const offerResultsEl = document.getElementById('offer-results');
-    const thinkingAnimationEl = document.getElementById('thinking-animation');
-
-    offerResultsEl?.classList.add('hidden');
-    thinkingAnimationEl?.classList.remove('hidden');
-
+  const processOffer = useCallback(async () => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
-
     const propertyData = getPropertyData();
-
     let partial: OfferPartial;
-
     switch (state.offerType) {
       case 'creative':
         partial = calculateCreativeOffer(propertyData);
@@ -280,38 +241,38 @@ export default function Home() {
         partial = calculateOffer(propertyData);
         break;
     }
-
     if (state.selectedProperty && state.selectedProperty.id && state.selectedProperty.id !== 'manual-entry') {
       await updateLowballOffer(partial.offerAmount);
     }
-
     const previewOffer: Offer = {
       id: `preview-${Date.now()}`,
       createdAt: new Date().toISOString(),
       status: 'pending',
       ...partial,
     };
-
     setCurrentOffer(previewOffer);
-
-    thinkingAnimationEl?.classList.add('hidden');
-    offerResultsEl?.classList.remove('hidden');
-
     setIsProcessing(false);
   }, [
-    validateInputs,
-    state.isProcessing,
-    setIsProcessing,
+    state.offerType,
+    state.selectedProperty,
     getPropertyData,
-    calculateOffer,
     calculateCreativeOffer,
     calculateNovationOffer,
     calculateZestimateOffer,
-    setCurrentOffer,
-    state.offerType,
-    state.selectedProperty,
+    calculateOffer,
     updateLowballOffer,
+    setCurrentOffer,
+    setIsProcessing,
   ]);
+
+  const generateOffer = useCallback(() => {
+    if (!validateInputs() || state.isProcessing) {
+      console.log('Validation failed or already processing');
+      return;
+    }
+    setIsProcessing(true);
+    processOffer();
+  }, [validateInputs, state.isProcessing, setIsProcessing, processOffer]);
 
   const isButtonDisabled = !validateInputs() || state.isProcessing;
 
@@ -319,21 +280,17 @@ export default function Home() {
     <div className="app-container">
       <HeroSection />
       <NavigationTabs />
-
       {state.currentTab === 'generator' && (
         <div className="generator-content">
           <OfferTypeSelection />
           <PropertyInformation />
           <GenerateButton onClick={generateOffer} disabled={isButtonDisabled} />
-          {<ThinkingAnimation />}
-          {!state.isProcessing && state.currentOffer && <OfferResults showToast={showToast} />}
-          {<Footer />}
+          {state.isProcessing ? <ThinkingAnimation /> : state.currentOffer && <OfferResults showToast={showToast} />}
+          <Footer />
         </div>
       )}
-
-      <OffersHistory showToast={showToast} />
-
+      {state.currentTab === 'history' && <OffersHistory showToast={showToast} />}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
-}
+};
