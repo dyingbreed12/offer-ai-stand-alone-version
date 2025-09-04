@@ -5,15 +5,21 @@ export const HeroSection = () => (
     <div className="max-w-6xl mx-auto text-center">
       {/* Icon and title in same line with hero-title-container */}
       <div className="hero-title-container">
-        <div className="offer-type-icon">💵</div>
         <h1 className="hero-title">Lowball AI</h1>
       </div>
-      
+
+      <div className="hero-subtitle-container">
+
+        <p style={{ marginBottom: '2em' }} className="hero-sub-title">Brought to you by HowToWholesale.com and WholesaleSoftwares.com</p>      
+        
+        <h2 className="h2-hero-title" >Lowball AI spits out filthy lowball offers in seconds</h2>
+      </div>
+
       {/* Description */}
       <div className="hero-description">
-        <p>Lowball AI spits out instant, degenerate lowball offers, cash or creative, so you can rip huge </p>
-        <p>fees without overthinking. Seamlessly integrates with Assigns CRM</p>
-        <p> or plug in property details manually for fast, lowball offers.</p>
+        <p>Cash or creative, it doesn’t matter. Stop overthinking and start insulting sellers</p>
+        <p>(politely, of course), and walk away with spreads big enough</p>
+        <p>to make your high school haters choke on their 9-to-5.</p>
       </div>
     </div>
   </div>

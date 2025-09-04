@@ -76,7 +76,7 @@ select option {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin-bottom: 32px;
+    /* margin-bottom: 32px; */
     flex-wrap: nowrap;
 }
 
