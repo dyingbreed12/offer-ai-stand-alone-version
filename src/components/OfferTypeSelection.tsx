@@ -41,14 +41,14 @@ export const OfferTypeSelection = () => {
             onClick={() => handleMainStrategyClick("cash")}
             type="button"
           >
-            <span>Cash Options</span>
+            <span>Cash</span>
           </button>
           <button
             className={`nav-tab ${isCreativeActive ? "active" : ""}`}
             onClick={() => handleMainStrategyClick("creative")}
             type="button"
           >
-            <span>Creative Options</span>
+            <span>Creative</span>
           </button>
         </div>
       </div>
