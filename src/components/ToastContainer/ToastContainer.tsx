@@ -1,6 +1,9 @@
+// src/components/ToastContainer/ToastContainer.tsx
+
 'use client';
 
-import { Toast } from './Toast';
+import { Toast } from '../Toast/Toast';
+import styles from './ToastContainer.module.css';
 
 interface ToastData {
   id: string;
@@ -18,7 +21,7 @@ export const ToastContainer = ({ toasts, removeToast }: ToastContainerProps) => 
   if (toasts.length === 0) return null;
 
   return (
-    <div className="toast-container">
+    <div className={styles.toastContainer}>
       {toasts.map((toast) => (
         <Toast
           key={toast.id}

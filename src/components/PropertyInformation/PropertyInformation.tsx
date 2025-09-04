@@ -1,8 +1,11 @@
+// src/components/PropertyInformation.tsx
+
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
 import { useState, useEffect } from 'react';
 import { Opportunity, Property, CustomField } from '@/lib/types';
+import styles from './PropertyInformation.module.css';
 
 // Custom Field IDs from Assigns CRM
 const arvFieldId = 'wuSG63CwYz9EksTUtgH1';
@@ -127,7 +130,7 @@ export const PropertyInformation = () => {
 
   return (
     <div className="content-container">
-      <div className="property-info-section">
+      <div className={styles.propertyInfoSection}>
         <div className="section-header-centered">
           <h2 className="section-title">Property Information</h2>
           <p className="section-description">
@@ -135,23 +138,23 @@ export const PropertyInformation = () => {
           </p>
         </div>
 
-        {/* Feature Toggle: Only show search/manual buttons if PROPERTY_ENABLE_SEARCH_TOGGLE is true */}
-        {process.env.PROPERTY_ENABLE_SEARCH_TOGGLE === 'true' && (
-          <div className="search-mode-toggle">
+        {/* Feature Toggle: Only show search/manual buttons if NEXT_PUBLIC_ENABLE_SEARCH_TOGGLE is true */}
+        {process.env.NEXT_PUBLIC_ENABLE_SEARCH_TOGGLE === 'true' && (
+          <div className={styles.searchModeToggle}>
             <button
-              className={`mode-toggle-btn ${state.searchMode === 'search' ? 'active' : ''}`}
+              className={`${styles.modeToggleBtn} ${state.searchMode === 'search' ? styles.active : ''}`}
               onClick={() => handleSearchModeClick('search')}
               type="button"
             >
-              <div className="mode-icon">🔍</div>
+              <div className={styles.modeIcon}>🔍</div>
               <span>Search Deals</span>
             </button>
             <button
-              className={`mode-toggle-btn ${state.searchMode === 'manual' ? 'active' : ''}`}
+              className={`${styles.modeToggleBtn} ${state.searchMode === 'manual' ? styles.active : ''}`}
               onClick={() => handleSearchModeClick('manual')}
               type="button"
             >
-              <div className="mode-icon">✋</div>
+              <div className={styles.modeIcon}>✋</div>
               <span>Manual Entry</span>
             </button>
           </div>
@@ -159,8 +162,8 @@ export const PropertyInformation = () => {
 
         {/* Search Mode Content */}
         {state.searchMode === 'search' && (
-          <div className="search-content">
-            <div className="search-input-group">
+          <div className={styles.searchContent}>
+            <div className={styles.searchInputGroup}>
               <label className="search-label" htmlFor="address-search">
                 Search Address
               </label>
@@ -170,7 +173,7 @@ export const PropertyInformation = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Start typing an address or property name..."
-                className="search-input"
+                className={styles.searchInput}
               />
             </div>
             {loading && <div className="text-sm mt-2">Searching...</div>}
@@ -188,12 +191,12 @@ export const PropertyInformation = () => {
               </ul>
             )}
             {state.selectedProperty && (
-              <div className="selected-property mt-3">
-                <div className="property-info">
-                  <div className="property-icon">🏠</div>
-                  <div className="property-details">
-                    <h3 className="property-address">{state.selectedProperty.address}</h3>
-                    <p className="property-meta">
+              <div className={`${styles.selectedProperty} mt-3`}>
+                <div className={styles.propertyInfo}>
+                  <div className={styles.propertyIcon}>🏠</div>
+                  <div className={styles.propertyDetails}>
+                    <h3 className={styles.propertyAddress}>{state.selectedProperty.address}</h3>
+                    <p className={styles.propertyMeta}>
                       {state.offerType === 'cash' ? (
                         <>
                           ARV: ${state.selectedProperty.arv?.toLocaleString() || '0'} | Repairs: $
@@ -205,7 +208,7 @@ export const PropertyInformation = () => {
                     </p>
                   </div>
                 </div>
-                <button className="clear-btn" onClick={clearSelection} type="button">
+                <button className={styles.clearBtn} onClick={clearSelection} type="button">
                   ✕ Clear
                 </button>
               </div>
@@ -215,10 +218,10 @@ export const PropertyInformation = () => {
 
         {/* Manual Mode Content */}
         {state.searchMode === 'manual' && (
-          <div className="manual-content">
-            <div className="manual-form-grid">
-              <div className="form-field">
-                <label htmlFor="manual-address" className="field-label">
+          <div className={styles.manualContent}>
+            <div className={styles.manualFormGrid}>
+              <div className={styles.formField}>
+                <label htmlFor="manual-address" className={styles.fieldLabel}>
                   Property Address
                 </label>
                 <input
@@ -227,17 +230,17 @@ export const PropertyInformation = () => {
                   value={manualAddress}
                   onChange={(e) => setManualAddress(e.target.value)}
                   placeholder="123 Main St, Anytown"
-                  className="field-input"
+                  className={styles.fieldInput}
                 />
               </div>
               {state.offerType === 'cash' && (
                 <>
-                  <div className="form-field">
-                    <label htmlFor="manual-arv" className="field-label">
+                  <div className={styles.formField}>
+                    <label htmlFor="manual-arv" className={styles.fieldLabel}>
                       ARV (After Repair Value)
                     </label>
-                    <div className="input-with-prefix">
-                      <span className="input-prefix">$</span>
+                    <div className={styles.inputWithPrefix}>
+                      <span className={styles.inputPrefix}>$</span>
                       <input
                         type="number"
                         id="manual-arv"
@@ -245,16 +248,16 @@ export const PropertyInformation = () => {
                         onChange={(e) => setManualArv(e.target.value ? Number(e.target.value) : '')}
                         placeholder="250,000"
                         step={1000}
-                        className="field-input with-prefix"
+                        className={`${styles.fieldInput} ${styles.withPrefix}`}
                       />
                     </div>
                   </div>
-                  <div className="form-field">
-                    <label htmlFor="manual-repairs" className="field-label">
+                  <div className={styles.formField}>
+                    <label htmlFor="manual-repairs" className={styles.fieldLabel}>
                       Estimated Repair Costs
                     </label>
-                    <div className="input-with-prefix">
-                      <span className="input-prefix">$</span>
+                    <div className={styles.inputWithPrefix}>
+                      <span className={styles.inputPrefix}>$</span>
                       <input
                         type="number"
                         id="manual-repairs"
@@ -262,27 +265,27 @@ export const PropertyInformation = () => {
                         onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
                         placeholder="25,000"
                         step={1000}
-                        className="field-input with-prefix"
+                        className={`${styles.fieldInput} ${styles.withPrefix}`}
                       />
                     </div>
                   </div>
                 </>
               )}
               {isCreativeNovationZestimate && (
-                <div className="form-field">
-                  <label htmlFor="manual-asisvalue" className="field-label">
+                <div className={styles.formField}>
+                  <label htmlFor="manual-asisvalue" className={styles.fieldLabel}>
                     As Is Value
                   </label>
-                  <div className="input-with-prefix">
-                    <span className="input-prefix">$</span>
+                  <div className={styles.inputWithPrefix}>
+                    <span className={styles.inputPrefix}>$</span>
                     <input
                       type="number"
                       id="manual-asisvalue"
                       value={manualAsIsValue}
                       onChange={(e) => setManualAsIsValue(e.target.value ? Number(e.target.value) : '')}
                       placeholder="250,000"
-                      step={1000}                      
-                      className="field-input with-prefix"
+                      step={1000}
+                      className={`${styles.fieldInput} ${styles.withPrefix}`}
                     />
                   </div>
                 </div>

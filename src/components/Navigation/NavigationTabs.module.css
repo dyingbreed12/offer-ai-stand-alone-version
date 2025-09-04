@@ -1,0 +1,54 @@
+.navigationContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 48px;
+    padding: 0;
+}
+
+.navTabsWrapper {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    max-width: fit-content;
+}
+
+.navTab {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    min-width: 115px;
+}
+
+.navTab span {
+    flex: 1;
+    text-align: center;
+}
+
+.navTab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.navTab.active {
+    background: linear-gradient(45deg, #C1A25B, #69522F);
+    color: #1a1a1a;
+    box-shadow: 0 4px 20px rgba(193, 162, 91, 0.3);
+}
+
+.navTabIcon {
+    font-size: 18px;
+}

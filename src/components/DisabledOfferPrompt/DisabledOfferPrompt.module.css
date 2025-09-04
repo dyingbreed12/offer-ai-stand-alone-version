@@ -1,0 +1,83 @@
+/* Styles for the prompt overlay and card */
+.disabledOfferPromptOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.disabledOfferPromptCard {
+  background-color: var(--secondary-bg);
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.disabledOfferPromptClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.disabledOfferPromptClose:hover {
+  color: var(--red-accent);
+}
+
+/* Styles for the content inside the card */
+.disabledOfferPromptContent {
+  /* Added a wrapper for content */
+}
+
+.promptTitle {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.promptMessage {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.promptTagline {
+  font-size: 0.9rem;
+  color: var(--disabled-color);
+  margin-bottom: 1.5rem;
+}
+
+.promptButton {
+  font-family: 'Anton', sans-serif;
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  border: 2px solid var(--text-color);
+  border-radius: 9999px;
+  text-decoration: none;
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
+}
+
+.promptButton:hover {
+  background: linear-gradient(145deg, var(--gold-accent-lighter), var(--gold-accent-darker));
+  color: var(--primary-bg);
+  border-color: var(--gold-accent-medium);
+}

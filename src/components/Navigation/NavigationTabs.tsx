@@ -3,33 +3,34 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import styles from './NavigationTabs.module.css';
 
 export const NavigationTabs = () => {
   const { state, switchTab } = useAppContext();
   const offerCount = state.savedOffers.length;
 
   const handleTabClick = (tab: 'generator' | 'history') => {
-    console.log('Tab clicked:', tab); // Debug log
+    console.log('Tab clicked:', tab);
     switchTab(tab);
   };
 
   return (
-    <div className="navigation-container">
-      <div className="nav-tabs-wrapper">
+    <div className={styles.navigationContainer}>
+      <div className={styles.navTabsWrapper}>
         <button
-          className={`nav-tab ${state.currentTab === 'generator' ? 'active' : ''}`}
+          className={`${styles.navTab} ${state.currentTab === 'generator' ? styles.active : ''}`}
           onClick={() => handleTabClick('generator')}
           type="button"
         >
-          <div className="nav-tab-icon">🤖</div>
+          <div className={styles.navTabIcon}>🤖</div>
           <span>Generate Offer</span>
         </button>
         <button
-          className={`nav-tab ${state.currentTab === 'history' ? 'active' : ''}`}
+          className={`${styles.navTab} ${state.currentTab === 'history' ? styles.active : ''}`}
           onClick={() => handleTabClick('history')}
           type="button"
         >
-          <div className="nav-tab-icon">📋</div>
+          <div className={styles.navTabIcon}>📋</div>
           <span>View Offers ({offerCount})</span>
         </button>
       </div>

@@ -1,0 +1,17 @@
+/* Toast Notification System */
+.toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Mobile responsiveness for toast container */
+@media (max-width: 480px) {
+  .toastContainer {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+}

@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
-import { ConfirmationModal } from './ConfirmationModal';
+import { ConfirmationModal } from '../ConfirmationModal/ConfirmationModal';
+import styles from './OffersHistory.module.css';
 
 interface OffersHistoryProps {
   showToast: (
@@ -69,24 +70,24 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
 
   return (
     <div className="content-container">
-      <div className="history-section">
-        <div className="history-header">
+      <div className={styles.historySection}>
+        <div className={styles.historyHeader}>
           <div>
-            <h2 className="history-title">Your Saved Offers</h2>
-            <p className="history-description">
+            <h2 className={styles.historyTitle}>Your Saved Offers</h2>
+            <p className={styles.historyDescription}>
               Track and manage all your generated offers in one place.
             </p>
           </div>
-          <button onClick={handleClearAll} className="clear-all-btn" type="button">
+          <button onClick={handleClearAll} className={styles.clearAllBtn} type="button">
             🗑️ Clear All
           </button>
         </div>
 
-        <div className="history-filters">
-          <div className="filter-group">
-            <label className="filter-label">Filter by Type</label>
+        <div className={styles.historyFilters}>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Filter by Type</label>
             <select
-              className="filter-select"
+              className={styles.filterSelect}
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
             >
@@ -97,10 +98,10 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
               <option value="novation">Novation Offers</option>
             </select>
           </div>
-          <div className="filter-group">
-            <label className="filter-label">Sort by</label>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Sort by</label>
             <select
-              className="filter-select"
+              className={styles.filterSelect}
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -110,25 +111,25 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
               <option value="amount-low">Lowest Amount</option>
             </select>
           </div>
-          <div className="filter-group">
-            <label className="filter-label">Search Offers</label>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Search Offers</label>
             <input
               type="text"
               placeholder="Search by address or notes..."
-              className="filter-input"
+              className={styles.filterInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="offers-grid">
+        <div className={styles.offersGrid}>
           {filteredAndSortedOffers.map((offer) => (
-            <div key={offer.id} className="offer-card">
-              <div className="offer-card-header">
+            <div key={offer.id} className={styles.offerCard}>
+              <div className={styles.offerCardHeader}>
                 <div>
-                  <h3 className="offer-address">{offer.address}</h3>
-                  <div className="offer-status">
+                  <h3 className={styles.offerAddress}>{offer.address}</h3>
+                  <div className={styles.offerStatus}>
                     {offer.offerType === 'cash'
                       ? '💵 Fix and Flip '
                       : offer.offerType === 'creative'
@@ -136,52 +137,50 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
                       : offer.offerType === 'novation'
                       ? '📝 Novation '
                       : '📊 Zillow '}
-                     Offer
+                    Offer
                   </div>
                 </div>
                 <button
                   onClick={() => handleDeleteOffer(offer.id)}
-                  className="delete-btn"
+                  className={styles.deleteBtn}
                   type="button"
                 >
                   🗑️
                 </button>
               </div>
 
-              <div className="offer-card-body">
-                <div className="offer-amount-display">
+              <div className={styles.offerCardBody}>
+                <div className={styles.offerAmountDisplay}>
                   {offer.offerType === 'creative' ? `$${(offer.monthlyPayment ?? 0).toFixed(2)}` : `$${offer.offerAmount.toLocaleString()}`}
                 </div>
-                <div className="offer-meta">
+                <div className={styles.offerMeta}>
                   {offer.offerType !== 'cash' ? (
                     `As Is Value: $${offer.asIsValue?.toLocaleString()}`
                   ) : (
                     <>
-                      ARV: ${offer.arv.toLocaleString()} | Repairs: $
-                      {offer.repairs.toLocaleString()}
+                      ARV: ${offer.arv.toLocaleString()} | Repairs: ${offer.repairs.toLocaleString()}
                     </>
                   )}
                 </div>
 
-                {/* New: Display creative offer details */}
                 {offer.offerType === 'creative' && (
-                  <div className="mt-4 text-sm text-gray-400 border-t border-gray-700 pt-3">
-                    <div className="flex justify-between mb-1">
+                  <div className={styles.offerMetaDetails}>
+                    <div className={styles.offerMetaRow}>
                       <span>Downpayment:</span>
-                      <span className="font-semibold text-gray-200">${offer.downPayment?.toLocaleString()}</span>
+                      <span>${offer.downPayment?.toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between mb-1">
+                    <div className={styles.offerMetaRow}>
                       <span>Loan Length:</span>
-                      <span className="font-semibold text-gray-200">{offer.longLengthInMonths} months</span>
+                      <span>{offer.longLengthInMonths} months</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className={styles.offerMetaRow}>
                       <span>Price:</span>
-                      <span className="font-semibold text-gray-200">${offer.price?.toLocaleString()}</span>
+                      <span>${offer.price?.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
                 
-                <div className="offer-date">
+                <div className={styles.offerDate}>
                   Generated on {new Date(offer.createdAt).toLocaleDateString()}
                 </div>
               </div>
@@ -190,19 +189,19 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
         </div>
 
         {filteredAndSortedOffers.length === 0 && (
-          <div className="empty-offers">
+          <div className={styles.emptyOffers}>
             <Image
               src="/images/saved_folder.png"
               alt="Empty folder representing no saved offers"
               width={60}
               height={60}
             />
-            <h3 className="empty-title">No Offers Saved Yet</h3>
-            <p className="empty-description">
+            <h3 className={styles.emptyTitle}>No Offers Saved Yet</h3>
+            <p className={styles.emptyDescription}>
               You haven&apos;t generated any offers yet. Create your first professional offer to get started!
             </p>
             <button
-              className="empty-action-btn"
+              className={styles.emptyActionBtn}
               onClick={handleSwitchToGenerator}
               type="button"
             >
@@ -212,7 +211,6 @@ export const OffersHistory = ({ showToast }: OffersHistoryProps) => {
         )}
       </div>
 
-      {/* Confirmation modal */}
       {isConfirmOpen && (
         <ConfirmationModal
           isOpen={isConfirmOpen}

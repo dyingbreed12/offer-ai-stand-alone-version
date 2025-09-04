@@ -7,16 +7,16 @@ import { useAppContext } from '@/context/AppContext';
 import { Offer } from '@/lib/types';
 
 // Components
-import { HeroSection } from '@/components/HeroSection';
-import { NavigationTabs } from '@/components/NavigationTabs';
-import { OfferTypeSelection } from '@/components/OfferTypeSelection';
-import { PropertyInformation } from '@/components/PropertyInformation';
-import { GenerateButton } from '@/components/GenerateButton';
-import { ThinkingAnimation } from '@/components/ThinkingAnimation';
-import { OfferResults } from '@/components/OfferResults';
-import { Footer } from '@/components/Footer';
-import { OffersHistory } from '@/components/OffersHistory';
-import { ToastContainer } from '@/components/ToastContainer';
+import { HeroSection } from '@/components/Hero/HeroSection';
+import { NavigationTabs } from '@/components/Navigation/NavigationTabs';
+import { OfferTypeSelection } from '@/components/OfferTypeSelection/OfferTypeSelection';
+import { PropertyInformation } from '@/components/PropertyInformation/PropertyInformation';
+import { GenerateButton } from '@/components/GenerateButton/GenerateButton';
+import { ThinkingAnimation } from '@/components/ThinkingAnimation/ThinkingAnimation';
+import { OfferResults } from '@/components/OfferResults/OfferResults';
+import { Footer } from '@/components/Footer/Footer';
+import { OffersHistory } from '@/components/OffersHistory/OffersHistory';
+import { ToastContainer } from '@/components/ToastContainer/ToastContainer';
 
 // Shared interface for property input
 interface PropertyData {

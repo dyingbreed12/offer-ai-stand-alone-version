@@ -1,0 +1,101 @@
+.offerStrategySection {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    margin: 0 0 48px 0;
+    padding: 48px 24px;
+    max-width: 100%;
+}
+
+.navigationContainer {
+  /* You may need to create a new navTabsWrapper class if it's not present */
+}
+.navTabsWrapper {
+    /* You may need to create a new navTabsWrapper class if it's not present */
+}
+.navTab {
+    /* You may need to create a new navTabsWrapper class if it's not present */
+}
+
+.offerTypeContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.offerTypeWrapper {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: fit-content;
+}
+
+@media (max-width: 768px) {
+  .offerTypeWrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+.offerTypeOption {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 20px 32px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.offerTypeOption:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.offerTypeOption.active {
+    background: linear-gradient(45deg, #C1A25B, #69522F);
+    color: #1a1a1a;
+    box-shadow: 0 4px 20px rgba(193, 162, 91, 0.3);
+}
+
+.offerTypeIcon {
+    font-size: 24px;
+}
+
+.offerTypeContent {
+    text-align: left;
+}
+
+.offerTypeTitle {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 4px;
+}
+
+.offerTypeSubtitle {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.disabledIconAndText {
+    opacity: 0.4;
+}
+
+.offerTypeOption.disabled {
+    /* Changed to pointer cursor */
+    cursor: pointer;
+}
+
+.offerTypeOption.disabled:hover {
+    border-color: #e2e8f0;
+    box-shadow: none;
+    transform: none;
+}

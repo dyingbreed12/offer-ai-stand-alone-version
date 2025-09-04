@@ -3,6 +3,7 @@
 'use client';
 
 import Image from 'next/image';
+import styles from './ThinkingAnimation.module.css';
 
 export const ThinkingAnimation = () => {
   const messages = [
@@ -17,14 +18,14 @@ export const ThinkingAnimation = () => {
 
   return (
     <div className="content-container">
-      <div id="thinking-animation" className="thinking-section">
-        <div className="robot-container">
-          <div className="robot-head">
-            <div className="robot-eyes">
-              <div className="robot-eye"></div>
-              <div className="robot-eye"></div>
+      <div id="thinking-animation" className={styles.thinkingSection}>
+        <div className={styles.robotContainer}>
+          <div className={styles.robotHead}>
+            <div className={styles.robotEyes}>
+              <div className={styles.robotEye}></div>
+              <div className={styles.robotEye}></div>
             </div>
-            <div className="robot-brain">
+            <div className={styles.robotBrain}>
               <Image
                 src="/images/brain_animated.png"
                 alt="Spinning brain icon representing AI processing"
@@ -33,14 +34,14 @@ export const ThinkingAnimation = () => {
               />
             </div>
           </div>
-          <h3 className="thinking-title">Lowball AI is Analyzing Your Property...</h3>
-          <p className="thinking-description">
+          <h3 className={styles.thinkingTitle}>Lowball AI is Analyzing Your Property...</h3>
+          <p className={styles.thinkingDescription}>
             {randomMessage}
           </p>
-          <div className="thinking-dots">
-            <div className="thinking-dot"></div>
-            <div className="thinking-dot"></div>
-            <div className="thinking-dot"></div>
+          <div className={styles.thinkingDots}>
+            <div className={styles.thinkingDot}></div>
+            <div className={styles.thinkingDot}></div>
+            <div className={styles.thinkingDot}></div>
           </div>
         </div>
       </div>

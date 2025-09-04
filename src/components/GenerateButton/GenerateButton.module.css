@@ -1,0 +1,6 @@
+/* Generate Button */
+.generate-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 48px 0;
+}

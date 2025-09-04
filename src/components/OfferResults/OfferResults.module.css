@@ -1,0 +1,226 @@
+/* --- OfferResults.tsx CSS --- */
+/* You can replace your entire OfferResults.tsx CSS with this block */
+
+/* Parent for positioning */
+.offerResultsSection {
+  position: relative;
+  background-color: var(--secondary-bg);
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Deal Score Container */
+.dealScoreContainer {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dealScoreLabel {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.25rem;
+  color: var(--text-color);
+}
+
+.dealScoreCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--red-accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.dealScoreCircle:hover {
+  background: linear-gradient(145deg, var(--gold-accent-lighter), var(--gold-accent-darker));
+}
+
+.dealScoreValue {
+  font-size: 2rem;
+  color: var(--red-accent);
+  filter: blur(4px);
+}
+
+/* Main content */
+.offerResultsContent {
+  text-align: center;
+}
+
+.offerResultsTitle {
+  font-family: 'Anton', sans-serif;
+  font-size: 2rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.offerAmount {
+  font-family: 'Anton', sans-serif;
+  font-size: 4rem;
+  letter-spacing: -2px;
+  color: var(--gold-accent-lighter);
+  margin-bottom: 0.5rem;
+}
+
+.offerTypeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  text-transform: uppercase;
+}
+
+/* Breakdown and Financials Sections */
+.offerBreakdown {
+  margin-top: 2.5rem;
+}
+
+.financialsSection {
+  margin-top: 2rem;
+}
+
+.breakdownTitle {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.breakdownRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.breakdownItem {
+  position: relative; /* IMPORTANT: for tooltip positioning */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--primary-bg);
+  border-radius: 8px;
+  border: 1px solid var(--primary-bg);
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.breakdownItem.noBorderOrPadding {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.breakdownItem:hover {
+  border-color: var(--gold-accent-medium);
+}
+
+.breakdownLabel {
+  font-size: 0.875rem;
+  color: var(--disabled-color);
+  margin-bottom: 0.5rem;
+}
+
+.breakdownValue {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.75rem;
+  color: var(--text-color);
+}
+
+.blurredText {
+  filter: blur(4px);
+}
+
+/* Final Offer Section */
+.finalOfferSection {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.finalOfferItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+}
+.finalOfferLabel {
+  font-weight: 600;
+}
+.finalOfferValue {
+  color: var(--gold-accent-lighter);
+}
+
+/* Actions Section */
+.offerActions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.actionBtn {
+  font-family: 'Anton', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.actionBtn:hover {
+  opacity: 0.8;
+}
+
+.actionBtn.save {
+  background-color: var(--secondary-bg);
+  border-color: var(--gold-accent-medium);
+  color: var(--text-color);
+}
+
+.actionBtn.generateNew {
+  background: var(--gold-accent-medium);
+  border-color: var(--gold-accent-medium);
+  color: var(--primary-bg);
+}
+
+.actionBtn.findBuyer {
+  background-color: var(--red-accent);
+  border-color: var(--red-accent);
+  color: var(--text-color);
+}
+
+.actionBtn.download,
+.actionBtn.share {
+  background-color: var(--secondary-bg);
+  border-color: var(--secondary-bg);
+  color: var(--text-color);
+}
+
+.actionBtn.download:hover,
+.actionBtn.share:hover {
+  background-color: var(--primary-bg);
+}

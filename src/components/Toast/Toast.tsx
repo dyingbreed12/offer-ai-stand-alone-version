@@ -1,6 +1,9 @@
+// src/components/Toast.tsx
+
 'use client';
 
 import { useEffect } from 'react';
+import styles from './Toast.module.css';
 
 export interface ToastProps {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -26,13 +29,13 @@ export const Toast: React.FC<ToastProps> = ({ type, title, message, onClose }) =
   }, [onClose]);
 
   return (
-    <div className={`toast ${type}`}>
-      <div className="toast-icon">{icons[type]}</div>
-      <div className="toast-content">
-        <div className="toast-title">{title}</div>
-        <div className="toast-message">{message}</div>
+    <div className={`${styles.toast} ${styles[type]}`}>
+      <div className={styles.toastIcon}>{icons[type]}</div>
+      <div className={styles.toastContent}>
+        <div className={styles.toastTitle}>{title}</div>
+        <div className={styles.toastMessage}>{message}</div>
       </div>
-      <button className="toast-close" onClick={onClose}>×</button>
+      <button className={styles.toastClose} onClick={onClose}>×</button>
     </div>
   );
 };
