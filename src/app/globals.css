@@ -510,6 +510,12 @@ select option {
     align-items: center;
     gap: 8px;
     white-space: nowrap;
+    min-width: 115px;
+}
+
+.nav-tab span {
+    flex: 1;
+    text-align: center;
 }
 
 .nav-tab:hover {
