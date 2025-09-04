@@ -21,7 +21,7 @@ export const PropertyInformation = () => {
   const [manualArv, setManualArv] = useState<number | ''>('');
   const [manualRepairs, setManualRepairs] = useState<number | ''>('');
   const [manualAsIsValue, setManualAsIsValue] = useState<number | ''>('');
-//  const [manualNotes, setManualNotes] = useState('');
+//  const [manualNotes, setManualNotes] = useState('');
 
   const handleSearchModeClick = (mode: 'search' | 'manual') => {
     setSearchMode(mode);
@@ -48,7 +48,7 @@ export const PropertyInformation = () => {
             id: 'manual-entry',
             name: manualAddress,
             address: manualAddress,
-            arv: 0, // Not applicable for this offer type in manual mode
+            arv: 0,
             repairs: 0,
             asIsValue: Number(manualAsIsValue),
           };
@@ -117,7 +117,7 @@ export const PropertyInformation = () => {
     };
 
     setSelectedProperty(property);
-    setResults([]); // ✅ FIX: Clear search results after selection
+    setResults([]);
     setQuery(opportunity.name);
   };
 
@@ -131,36 +131,38 @@ export const PropertyInformation = () => {
         <div className="section-header-centered">
           <h2 className="section-title">Property Information</h2>
           <p className="section-description">
-            Search your Assigns CRM deals or enter property details manually for instant lowball AI offers.
+            Put the numbers in. Get your f*ing lowball offer.
           </p>
         </div>
 
-        {/* Search Mode Toggle */}
-        <div className="search-mode-toggle">
-          <button
-            className={`mode-toggle-btn ${state.searchMode === 'search' ? 'active' : ''}`}
-            onClick={() => handleSearchModeClick('search')}
-            type="button"
-          >
-            <div className="mode-icon">🔍</div>
-            <span>Search Deals</span>
-          </button>
-          <button
-            className={`mode-toggle-btn ${state.searchMode === 'manual' ? 'active' : ''}`}
-            onClick={() => handleSearchModeClick('manual')}
-            type="button"
-          >
-            <div className="mode-icon">✋</div>
-            <span>Manual Entry</span>
-          </button>
-        </div>
+        {/* Feature Toggle: Only show search/manual buttons if PROPERTY_ENABLE_SEARCH_TOGGLE is true */}
+        {process.env.PROPERTY_ENABLE_SEARCH_TOGGLE === 'true' && (
+          <div className="search-mode-toggle">
+            <button
+              className={`mode-toggle-btn ${state.searchMode === 'search' ? 'active' : ''}`}
+              onClick={() => handleSearchModeClick('search')}
+              type="button"
+            >
+              <div className="mode-icon">🔍</div>
+              <span>Search Deals</span>
+            </button>
+            <button
+              className={`mode-toggle-btn ${state.searchMode === 'manual' ? 'active' : ''}`}
+              onClick={() => handleSearchModeClick('manual')}
+              type="button"
+            >
+              <div className="mode-icon">✋</div>
+              <span>Manual Entry</span>
+            </button>
+          </div>
+        )}
 
         {/* Search Mode Content */}
         {state.searchMode === 'search' && (
           <div className="search-content">
             <div className="search-input-group">
               <label className="search-label" htmlFor="address-search">
-                Search Address or Property Name
+                Search Address
               </label>
               <input
                 type="text"
@@ -171,10 +173,7 @@ export const PropertyInformation = () => {
                 className="search-input"
               />
             </div>
-
             {loading && <div className="text-sm mt-2">Searching...</div>}
-
-            {/* Render results only if not loading and a property hasn't been selected */}
             {!loading && !state.selectedProperty && results.length > 0 && (
               <ul className="border mt-2 rounded-lg bg-white shadow">
                 {results.map((op) => (
@@ -188,7 +187,6 @@ export const PropertyInformation = () => {
                 ))}
               </ul>
             )}
-
             {state.selectedProperty && (
               <div className="selected-property mt-3">
                 <div className="property-info">
@@ -232,8 +230,6 @@ export const PropertyInformation = () => {
                   className="field-input"
                 />
               </div>
-
-              {/* Show ARV and Repairs for Cash Offers */}
               {state.offerType === 'cash' && (
                 <>
                   <div className="form-field">
@@ -248,6 +244,7 @@ export const PropertyInformation = () => {
                         value={manualArv}
                         onChange={(e) => setManualArv(e.target.value ? Number(e.target.value) : '')}
                         placeholder="250,000"
+                        step={1000}
                         className="field-input with-prefix"
                       />
                     </div>
@@ -264,14 +261,13 @@ export const PropertyInformation = () => {
                         value={manualRepairs}
                         onChange={(e) => setManualRepairs(e.target.value ? Number(e.target.value) : '')}
                         placeholder="25,000"
+                        step={1000}
                         className="field-input with-prefix"
                       />
                     </div>
                   </div>
                 </>
               )}
-
-              {/* Show As Is Value for other offer types */}
               {isCreativeNovationZestimate && (
                 <div className="form-field">
                   <label htmlFor="manual-asisvalue" className="field-label">
@@ -285,6 +281,7 @@ export const PropertyInformation = () => {
                       value={manualAsIsValue}
                       onChange={(e) => setManualAsIsValue(e.target.value ? Number(e.target.value) : '')}
                       placeholder="250,000"
+                      step={1000}                      
                       className="field-input with-prefix"
                     />
                   </div>
